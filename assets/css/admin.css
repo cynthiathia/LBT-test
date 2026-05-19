@@ -226,6 +226,10 @@ body {
   border-left: 1px solid var(--border);
 }
 
+.custom-range[hidden] {
+  display: none;
+}
+
 .custom-range input[type="date"] {
   background: var(--bg-deep);
   border: 1px solid var(--border);

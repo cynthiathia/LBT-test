@@ -89,13 +89,14 @@ function initDashboard() {
     const statsRaw = data.stats     || {};
     const v2       = statsRaw.v2    || {};
 
-    // legacy(stats/*) + v2(stats/v2/*) 머지
+    // legacy + v2 — 응답 수는 머지된 byDate, 유형 분포는 비례 추정용으로 분리 보관
     cachedStats = {
-      total:        (statsRaw.total || 0) + (v2.total || 0),
       byDate:       mergeMaps(statsRaw.byDate || {}, v2.byDate || {}),
-      byType:       mergeMaps(statsRaw.byType || {}, v2.byType || {}),
-      byTypeDate:   v2.byTypeDate   || {},  // v2-only (legacy 미보유)
-      uniqueByDate: v2.uniqueByDate || {},  // v2-only (legacy 미보유)
+      legacyByDate: statsRaw.byDate || {},
+      legacyByType: statsRaw.byType || {},
+      v2ByDate:     v2.byDate       || {},
+      v2ByType:     v2.byType       || {},
+      uniqueByDate: v2.uniqueByDate || {},
     };
     cachedClicks = statsRaw.clicks || {};
 
@@ -145,6 +146,12 @@ function initDashboard() {
     if (s > e) { alert('시작일이 종료일보다 늦을 수 없습니다.'); return; }
     customStart = s;
     customEnd   = e;
+    // 사용자지정 모드로 강제 전환
+    currentPeriod = 'custom';
+    document.querySelectorAll('.period-btn-global').forEach(b => {
+      b.classList.toggle('active', b.dataset.period === 'custom');
+    });
+    document.getElementById('custom-range').hidden = false;
     renderAll();
   });
 }
@@ -201,8 +208,10 @@ function mergeMaps(a, b) {
 function aggregateData() {
   const range        = getDateRange();
   const byDate       = cachedStats.byDate       || {};
-  const byType       = cachedStats.byType       || {};
-  const byTypeDate   = cachedStats.byTypeDate   || {};
+  const legacyByDate = cachedStats.legacyByDate || {};
+  const legacyByType = cachedStats.legacyByType || {};
+  const v2ByDate     = cachedStats.v2ByDate     || {};
+  const v2ByType     = cachedStats.v2ByType     || {};
   const uniqueByDate = cachedStats.uniqueByDate || {};
   const clicks       = cachedClicks;
 
@@ -216,22 +225,40 @@ function aggregateData() {
     }
   });
 
-  // 유형별 (byTypeDate 우선, 없으면 누적 byType 폴백)
-  const typeCountsPeriod = {};
-  let hasPeriodTypeData  = false;
-  Object.entries(byTypeDate).forEach(([date, types]) => {
-    if (!inRange(date, range)) return;
-    Object.entries(types || {}).forEach(([code, cnt]) => {
-      typeCountsPeriod[code] = (typeCountsPeriod[code] || 0) + cnt;
-      hasPeriodTypeData = true;
-    });
+  // 유형별 분포 — 비례 추정
+  // legacy/v2 각각: 해당 기간에 들어온 응답 수 × (유형 누적 / 전체 누적)
+  const typeCounts = {};
+
+  const legacyTotal = Object.values(legacyByType).reduce((s, n) => s + n, 0);
+  const v2Total     = Object.values(v2ByType).reduce((s, n) => s + n, 0);
+
+  let legacyInRange = 0;
+  Object.entries(legacyByDate).forEach(([date, cnt]) => {
+    if (inRange(date, range)) legacyInRange += cnt;
+  });
+  let v2InRange = 0;
+  Object.entries(v2ByDate).forEach(([date, cnt]) => {
+    if (inRange(date, range)) v2InRange += cnt;
   });
 
-  // byTypeDate 합계가 byDate(응답 수)의 절반 미만이면 누적 byType 폴백
-  const periodTypeSum = Object.values(typeCountsPeriod).reduce((s, n) => s + n, 0);
-  const useFallback   = !hasPeriodTypeData || (responseTotal > 0 && periodTypeSum < responseTotal / 2);
-  const typeCounts    = useFallback ? byType : typeCountsPeriod;
-  const typeIsFallback = useFallback;
+  if (legacyTotal > 0 && legacyInRange > 0) {
+    const ratio = legacyInRange / legacyTotal;
+    Object.entries(legacyByType).forEach(([code, cnt]) => {
+      typeCounts[code] = (typeCounts[code] || 0) + cnt * ratio;
+    });
+  }
+  if (v2Total > 0 && v2InRange > 0) {
+    const ratio = v2InRange / v2Total;
+    Object.entries(v2ByType).forEach(([code, cnt]) => {
+      typeCounts[code] = (typeCounts[code] || 0) + cnt * ratio;
+    });
+  }
+
+  // 반올림 + 0 제거
+  Object.keys(typeCounts).forEach(code => {
+    typeCounts[code] = Math.round(typeCounts[code]);
+    if (typeCounts[code] === 0) delete typeCounts[code];
+  });
 
   // 고유 참여자 (v2-only)
   const uniqueUsers = new Set();
@@ -257,7 +284,7 @@ function aggregateData() {
     clickRows.push({ key: linkKey, total: linkPeriodTotal });
   });
 
-  return { range, responseTotal, uniqueCount, participantsByDate, typeCounts, typeIsFallback, clickTotal, clicksByDate, clickRows };
+  return { range, responseTotal, uniqueCount, participantsByDate, typeCounts, clickTotal, clicksByDate, clickRows };
 }
 
 /* ────────── 전체 렌더 ────────── */
@@ -285,16 +312,10 @@ function renderPeriodInfo(range) {
 /* ────────── 통계 카드 ────────── */
 
 function renderStatCards(agg) {
-  const { responseTotal, uniqueCount, typeCounts, typeIsFallback, clickTotal, range } = agg;
+  const { responseTotal, uniqueCount, typeCounts, clickTotal, range } = agg;
 
   document.getElementById('period-responses').textContent     = responseTotal.toLocaleString('ko-KR');
   document.getElementById('period-unique-users').textContent  = uniqueCount.toLocaleString('ko-KR');
-
-  // typeIsFallback 시 카드 라벨에 "(누적)" 배지
-  const topLabel = document.querySelector('#period-top-type')?.parentElement?.querySelector('.stat-label');
-  const botLabel = document.querySelector('#period-bottom-type')?.parentElement?.querySelector('.stat-label');
-  if (topLabel) topLabel.textContent = typeIsFallback ? '최다 유형 (누적)' : '최다 유형';
-  if (botLabel) botLabel.textContent = typeIsFallback ? '최소 유형 (누적)' : '최소 유형';
 
   const sorted = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
   if (sorted.length > 0) {
