@@ -1,0 +1,490 @@
+/* ──────────────────────────────────────────────
+   LBT 카드뉴스 — 인스타그램 6장 (1080x1080)
+   ────────────────────────────────────────────── */
+
+:root {
+  --cn-dark:        #1A2238;
+  --cn-light:       #F5F1E8;
+  --cn-cream:       #FAFAFA;
+  --cn-accent:      #FF8C61;
+  --cn-green:       #A8C68F;
+  --cn-ink:         #1A2238;
+  --cn-ink-soft:    #6E7891;
+  --cn-white:       #FFFFFF;
+  --cn-card-w:      1080px;
+  --cn-card-h:      1350px;     /* 인스타 세로형 4:5 */
+  --cn-preview-w:   420px;
+  --cn-preview-h:   525px;      /* 420 * 1.25 */
+  --cn-scale:       calc(var(--cn-preview-w) / var(--cn-card-w));
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #0F0E0C;
+  color: var(--cn-white);
+  font-family: 'Noto Sans KR', system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ──────────── 툴바 ──────────── */
+
+.cn-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(20, 18, 16, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255,140,97,0.18);
+  padding: 16px 24px 12px;
+}
+
+.cn-toolbar-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.cn-toolbar-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cn-white);
+  letter-spacing: -0.2px;
+}
+
+.cn-toolbar-note {
+  max-width: 1280px;
+  margin: 6px auto 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.55);
+}
+
+.cn-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s;
+}
+
+.cn-btn-primary {
+  background: var(--cn-accent);
+  color: #1A1410;
+}
+
+.cn-btn:hover  { opacity: 0.88; }
+.cn-btn:active { transform: scale(0.97); }
+
+/* ──────────── 카드 리스트 ──────────── */
+
+.cn-list {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 56px;
+  align-items: center;
+}
+
+.cn-frame {
+  width: 100%;
+  max-width: var(--cn-preview-w);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cn-frame-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 1px;
+}
+
+/* preview 스케일 컨테이너 */
+.cn-scaler {
+  position: relative;
+  width: var(--cn-preview-w);
+  height: var(--cn-preview-h);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+}
+
+.cn-scaler > .cn-card {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--cn-card-w);
+  height: var(--cn-card-h);
+  transform: scale(var(--cn-scale));
+  transform-origin: top left;
+}
+
+.cn-save-btn {
+  align-self: flex-end;
+  padding: 9px 18px;
+  background: transparent;
+  border: 1px solid rgba(255,140,97,0.5);
+  border-radius: 8px;
+  color: var(--cn-accent);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.cn-save-btn:hover {
+  background: var(--cn-accent);
+  color: #1A1410;
+}
+
+.cn-save-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* ──────────── 카드 공통 ──────────── */
+
+.cn-card {
+  width: 1080px;
+  height: 1350px;
+  padding: 110px 80px;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Noto Sans KR', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.cn-card-dark {
+  background: var(--cn-dark);
+  color: var(--cn-white);
+}
+
+.cn-card-light {
+  background: var(--cn-light);
+  color: var(--cn-ink);
+}
+
+.cn-card-cream {
+  background: var(--cn-cream);
+  color: var(--cn-ink);
+}
+
+.cn-card-top    { flex: 0 0 auto; }
+.cn-card-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 36px;
+}
+.cn-card-bottom { flex: 0 0 auto; text-align: center; }
+
+/* ──────────── 로고 ──────────── */
+
+.cn-logo {
+  display: inline-block;
+  padding: 8px 18px;
+  border: 2px solid var(--cn-accent);
+  border-radius: 100px;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--cn-accent);
+}
+
+.cn-logo-sub {
+  display: inline-block;
+  margin-left: 14px;
+  font-size: 18px;
+  color: rgba(255,255,255,0.5);
+  letter-spacing: 1px;
+  vertical-align: middle;
+}
+
+.cn-card-light .cn-logo {
+  border-color: var(--cn-ink);
+  color: var(--cn-ink);
+}
+
+/* ──────────── 헤드라인 ──────────── */
+
+.cn-headline-xl,
+.cn-headline-l,
+.cn-headline-m {
+  font-family: 'Noto Serif KR', serif;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1.28;
+}
+
+.cn-headline-xl { font-size: 92px; }
+.cn-headline-l  { font-size: 82px; }
+.cn-headline-m  { font-size: 72px; }
+
+.cn-accent       { color: var(--cn-accent); }
+.cn-accent-green { color: var(--cn-green); }
+
+/* ──────────── 본문/서브 ──────────── */
+
+.cn-sub {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 34px;
+  color: var(--cn-white);
+  margin-bottom: 6px;
+}
+
+.cn-sub-muted {
+  font-size: 22px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 1px;
+}
+
+.cn-sub-faded {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 30px;
+  color: var(--cn-ink-soft);
+  font-style: italic;
+}
+
+.cn-sub-bold {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 38px;
+  font-weight: 700;
+  color: var(--cn-ink);
+}
+
+.cn-body {
+  font-size: 30px;
+  line-height: 1.85;
+  color: rgba(255,255,255,0.85);
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.cn-card-light .cn-body,
+.cn-card-cream .cn-body {
+  color: var(--cn-ink);
+}
+
+.cn-body-center { text-align: center; }
+.cn-body-emphasis {
+  color: var(--cn-accent);
+  font-weight: 700;
+  font-family: 'Noto Serif KR', serif;
+  font-size: 36px;
+}
+
+.cn-lead {
+  text-align: center;
+  font-size: 32px;
+  line-height: 1.7;
+  color: var(--cn-ink);
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.cn-tail {
+  text-align: center;
+  font-size: 28px;
+  line-height: 1.7;
+  color: var(--cn-ink-soft);
+}
+.cn-tail strong { color: var(--cn-accent); }
+
+/* ──────────── 카드 ② 말풍선 ──────────── */
+
+.cn-quote-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  font-family: 'Noto Serif KR', serif;
+  color: var(--cn-ink);
+}
+
+.cn-quote-list li {
+  padding: 18px 26px;
+  background: var(--cn-white);
+  border-radius: 60px 60px 60px 8px;
+  box-shadow: 0 4px 16px rgba(26,34,56,0.06);
+  display: inline-block;
+  width: fit-content;
+  max-width: 88%;
+  font-weight: 500;
+}
+
+.cn-q1 { font-size: 30px; align-self: flex-start;  transform: rotate(-1.5deg); }
+.cn-q2 { font-size: 36px; align-self: flex-end;    transform: rotate(2deg);    border-radius: 60px 60px 8px 60px; }
+.cn-q3 { font-size: 32px; align-self: flex-start;  transform: rotate(0.5deg); margin-left: 60px; }
+.cn-q4 { font-size: 34px; align-self: flex-end;    transform: rotate(-1deg);   border-radius: 60px 60px 8px 60px; }
+.cn-q5 { font-size: 30px; align-self: flex-start;  transform: rotate(1deg); margin-left: 30px; }
+
+/* ──────────── 카드 ④ 축 인포그래픽 ──────────── */
+
+.cn-axes {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 36px 32px;
+  background: rgba(255,255,255,0.55);
+  border-radius: 24px;
+}
+
+.cn-axis {
+  display: grid;
+  grid-template-columns: 60px 50px 60px 1fr;
+  align-items: center;
+  gap: 16px;
+  color: var(--cn-ink);
+}
+
+.cn-axis-left,
+.cn-axis-right {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 44px;
+  font-weight: 900;
+  text-align: center;
+  color: var(--cn-accent);
+}
+
+.cn-axis-divider {
+  font-size: 28px;
+  text-align: center;
+  color: var(--cn-ink-soft);
+}
+
+.cn-axis-desc {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--cn-ink);
+  padding-left: 14px;
+}
+
+/* ──────────── 카드 ⑤ 16개 유형 그리드 ──────────── */
+
+.cn-types-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 14px;
+  margin: 32px 0;
+}
+
+.cn-type {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 8px;
+  border-radius: 18px;
+  text-align: center;
+  background: var(--cn-white);
+  box-shadow: 0 3px 12px rgba(26,34,56,0.05);
+}
+
+.cn-type-p { background: #FFF5EE; }
+.cn-type-e { background: #F0F7EA; }
+
+.cn-type-emoji { font-size: 44px; line-height: 1; }
+.cn-type-name {
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--cn-ink);
+  letter-spacing: -0.5px;
+  line-height: 1.25;
+}
+
+/* ──────────── 카드 ⑥ CTA ──────────── */
+
+.cn-cta-meta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  margin: 16px 0 28px;
+}
+
+.cn-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.cn-meta-num {
+  font-family: 'Noto Serif KR', serif;
+  font-size: 64px;
+  font-weight: 900;
+  color: var(--cn-accent);
+  line-height: 1;
+}
+
+.cn-meta-label {
+  font-size: 18px;
+  color: rgba(255,255,255,0.7);
+  letter-spacing: 1px;
+}
+
+.cn-meta-divider {
+  width: 1px;
+  height: 50px;
+  background: rgba(255,255,255,0.18);
+}
+
+.cn-cta-btn {
+  margin: 32px auto 14px;
+  padding: 28px 56px;
+  background: var(--cn-accent);
+  color: #1A1410;
+  border-radius: 100px;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 38px;
+  font-weight: 900;
+  text-align: center;
+  width: fit-content;
+}
+
+.cn-cta-link {
+  text-align: center;
+  font-size: 22px;
+  color: rgba(255,255,255,0.7);
+  margin-top: 8px;
+}
+
+.cn-cta-foot {
+  margin-top: 14px;
+  font-size: 18px;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.5px;
+}
+
+/* ──────────── 모바일 ──────────── */
+
+@media (max-width: 480px) {
+  :root {
+    --cn-preview-w: 320px;
+    --cn-preview-h: 400px;
+  }
+  .cn-list { padding: 24px 16px 48px; gap: 40px; }
+  .cn-toolbar { padding: 12px 16px; }
+  .cn-toolbar-title { font-size: 14px; }
+  .cn-btn { font-size: 13px; padding: 9px 16px; }
+}

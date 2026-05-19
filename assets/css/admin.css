@@ -141,6 +141,24 @@ body {
   color: var(--ink-light);
 }
 
+.btn-cardnews {
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: 7px;
+  color: var(--gold);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+
+.btn-cardnews:hover {
+  background: var(--gold);
+  color: #1A1410;
+}
+
 .btn-logout {
   padding: 7px 16px;
   background: transparent;
