@@ -78,17 +78,27 @@ let configSaveHandler = null;
 let currentPeriod    = '30';     // 'day' | '7' | '30' | 'monthly' | 'custom'
 let customStart      = null;     // 'YYYY-MM-DD'
 let customEnd        = null;
-let cachedStatsV2    = {};
+let cachedStats      = {};       // legacy + v2 merged
 let cachedClicks     = {};
 
 /* ────────── 초기화 ────────── */
 
 function initDashboard() {
   db.ref('/').on('value', (snapshot) => {
-    const data  = snapshot.val() || {};
-    const stats = data.stats   || {};
-    cachedStatsV2 = stats.v2     || {};
-    cachedClicks  = stats.clicks || {};
+    const data     = snapshot.val() || {};
+    const statsRaw = data.stats     || {};
+    const v2       = statsRaw.v2    || {};
+
+    // legacy(stats/*) + v2(stats/v2/*) 머지
+    cachedStats = {
+      total:        (statsRaw.total || 0) + (v2.total || 0),
+      byDate:       mergeMaps(statsRaw.byDate || {}, v2.byDate || {}),
+      byType:       mergeMaps(statsRaw.byType || {}, v2.byType || {}),
+      byTypeDate:   v2.byTypeDate   || {},  // v2-only (legacy 미보유)
+      uniqueByDate: v2.uniqueByDate || {},  // v2-only (legacy 미보유)
+    };
+    cachedClicks = statsRaw.clicks || {};
+
     renderAll();
     renderConfig(data.config || {});
     updateTimestamp();
@@ -179,14 +189,24 @@ function inRange(dateKey, range) {
 
 /* ────────── 데이터 집계 ────────── */
 
+function mergeMaps(a, b) {
+  const out = { ...a };
+  Object.entries(b).forEach(([k, v]) => {
+    if (typeof v === 'number') out[k] = (out[k] || 0) + v;
+    else out[k] = v;
+  });
+  return out;
+}
+
 function aggregateData() {
   const range        = getDateRange();
-  const byDate       = cachedStatsV2.byDate       || {};
-  const byTypeDate   = cachedStatsV2.byTypeDate   || {};
-  const uniqueByDate = cachedStatsV2.uniqueByDate || {};
+  const byDate       = cachedStats.byDate       || {};
+  const byType       = cachedStats.byType       || {};
+  const byTypeDate   = cachedStats.byTypeDate   || {};
+  const uniqueByDate = cachedStats.uniqueByDate || {};
   const clicks       = cachedClicks;
 
-  // 응답 수 일별 집계
+  // 응답 수 (legacy + v2 머지된 byDate)
   const participantsByDate = {};
   let responseTotal        = 0;
   Object.entries(byDate).forEach(([date, cnt]) => {
@@ -196,16 +216,24 @@ function aggregateData() {
     }
   });
 
-  // 유형별 집계 (byTypeDate 기반)
-  const typeCounts = {};
+  // 유형별 (byTypeDate 우선, 없으면 누적 byType 폴백)
+  const typeCountsPeriod = {};
+  let hasPeriodTypeData  = false;
   Object.entries(byTypeDate).forEach(([date, types]) => {
     if (!inRange(date, range)) return;
-    Object.entries(types).forEach(([code, cnt]) => {
-      typeCounts[code] = (typeCounts[code] || 0) + cnt;
+    Object.entries(types || {}).forEach(([code, cnt]) => {
+      typeCountsPeriod[code] = (typeCountsPeriod[code] || 0) + cnt;
+      hasPeriodTypeData = true;
     });
   });
 
-  // 고유 참여자 집계 (uniqueByDate 기반, userId 합집합)
+  // byTypeDate 합계가 byDate(응답 수)의 절반 미만이면 누적 byType 폴백
+  const periodTypeSum = Object.values(typeCountsPeriod).reduce((s, n) => s + n, 0);
+  const useFallback   = !hasPeriodTypeData || (responseTotal > 0 && periodTypeSum < responseTotal / 2);
+  const typeCounts    = useFallback ? byType : typeCountsPeriod;
+  const typeIsFallback = useFallback;
+
+  // 고유 참여자 (v2-only)
   const uniqueUsers = new Set();
   Object.entries(uniqueByDate).forEach(([date, users]) => {
     if (!inRange(date, range)) return;
@@ -229,7 +257,7 @@ function aggregateData() {
     clickRows.push({ key: linkKey, total: linkPeriodTotal });
   });
 
-  return { range, responseTotal, uniqueCount, participantsByDate, typeCounts, clickTotal, clicksByDate, clickRows };
+  return { range, responseTotal, uniqueCount, participantsByDate, typeCounts, typeIsFallback, clickTotal, clicksByDate, clickRows };
 }
 
 /* ────────── 전체 렌더 ────────── */
@@ -257,10 +285,16 @@ function renderPeriodInfo(range) {
 /* ────────── 통계 카드 ────────── */
 
 function renderStatCards(agg) {
-  const { responseTotal, uniqueCount, typeCounts, clickTotal, range } = agg;
+  const { responseTotal, uniqueCount, typeCounts, typeIsFallback, clickTotal, range } = agg;
 
   document.getElementById('period-responses').textContent     = responseTotal.toLocaleString('ko-KR');
   document.getElementById('period-unique-users').textContent  = uniqueCount.toLocaleString('ko-KR');
+
+  // typeIsFallback 시 카드 라벨에 "(누적)" 배지
+  const topLabel = document.querySelector('#period-top-type')?.parentElement?.querySelector('.stat-label');
+  const botLabel = document.querySelector('#period-bottom-type')?.parentElement?.querySelector('.stat-label');
+  if (topLabel) topLabel.textContent = typeIsFallback ? '최다 유형 (누적)' : '최다 유형';
+  if (botLabel) botLabel.textContent = typeIsFallback ? '최소 유형 (누적)' : '최소 유형';
 
   const sorted = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
   if (sorted.length > 0) {
