@@ -95,8 +95,9 @@ let cachedTodayCount  = 0;
 function initDashboard() {
   // Firebase 실시간 리스너
   db.ref('/').on('value', (snapshot) => {
-    const data = snapshot.val() || {};
-    renderStats(data.stats || {});
+    const data  = snapshot.val() || {};
+    const stats = data.stats   || {};
+    renderStats({ ...(stats.v2 || {}), clicks: stats.clicks || {} });
     renderConfig(data.config || {});
     updateTimestamp();
   }, (err) => {
