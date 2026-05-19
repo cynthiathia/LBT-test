@@ -495,7 +495,7 @@ button { font-family: var(--font-sans); cursor:pointer; }
 }
 .section-cons .result-section-title { color: #d4a06a; }
 
-/* 💬 자주 하는 말 — 인용구 느낌 */
+/* 💬 자주 하는 말 — 보라 톤 (인용구 느낌, 이탤릭 X) */
 .section-phrases {
   background: rgba(195, 155, 211, 0.06);
   border: 1px solid rgba(195, 155, 211, 0.2);
@@ -510,11 +510,11 @@ button { font-family: var(--font-sans); cursor:pointer; }
 .section-phrases li {
   position: relative;
   padding: 8px 0 8px 22px;
-  font-family: var(--font-serif);
+  font-family: var(--font);
   font-size: 15px;
   line-height: 1.65;
   color: var(--ink);
-  font-style: italic;
+  font-style: normal;
   letter-spacing: -0.1px;
 }
 .section-phrases li::before {
@@ -529,12 +529,12 @@ button { font-family: var(--font-sans); cursor:pointer; }
   line-height: 1;
 }
 
-/* 🌀 반복하는 고민 — 글머리 */
+/* 🌀 반복하는 고민 — 청록 톤 */
 .section-concern {
-  background: rgba(180, 130, 210, 0.05);
-  border: 1px solid rgba(180, 130, 210, 0.18);
+  background: rgba(127, 184, 168, 0.07);
+  border: 1px solid rgba(127, 184, 168, 0.22);
 }
-.section-concern .result-section-title { color: #b482d2; }
+.section-concern .result-section-title { color: #7fb8a8; }
 
 .section-rx {
   background: var(--rx-bg);
@@ -621,6 +621,52 @@ button { font-family: var(--font-sans); cursor:pointer; }
   color: var(--gold);
   font-weight: 700;
   font-style: normal;
+}
+
+/* 공통 CTA — 도입부 */
+.cta-intro {
+  font-family: var(--font);
+  font-size: 15px;
+  color: var(--cream);
+  line-height: 1.9;
+  margin: 0 0 24px;
+  padding: 0 8px;
+  word-break: keep-all;
+  text-align: center;
+}
+
+/* 공통 CTA — 강조 문구 (1.5배 + 골드 + 볼드 + 위아래 큰따옴표) */
+.cta-highlight {
+  font-family: var(--font);
+  font-size: 22.5px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1.6;
+  margin: 0;
+  padding: 28px 8px 32px;
+  word-break: keep-all;
+  text-align: center;
+  position: relative;
+}
+
+.cta-highlight::before,
+.cta-highlight::after {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 38px;
+  color: var(--gold);
+  line-height: 0.4;
+  font-weight: 400;
+}
+
+.cta-highlight::before {
+  content: '\201C';
+  margin-bottom: 16px;
+}
+
+.cta-highlight::after {
+  content: '\201D';
+  margin-top: 22px;
 }
 
 /* 콘서트/외부 링크 버튼 */

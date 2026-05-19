@@ -42,7 +42,7 @@ async function init() {
   }
 
   // lbt_data.json 로드
-  const res  = await fetch('lbt_data.json?v=8');
+  const res  = await fetch('lbt_data.json?v=9');
   const data = await res.json();
   const type = data.types[typeCode];
 
@@ -100,12 +100,10 @@ function renderResult(type, meta) {
   renderList('result-concern',  type.recurringConcern || []);
 
   // 공통 CTA — meta.cta (16개 유형 동일)
-  const ctaEl = document.getElementById('type-cta');
-  const cta   = (meta && meta.cta) || '';
-  ctaEl.innerHTML = cta
-    .split('\n')
-    .map(line => line.trim() === '' ? '<br>' : line)
-    .join('<br>');
+  const cta = (meta && meta.cta) || {};
+  document.getElementById('cta-intro').innerHTML =
+    (cta.intro || '').replace(/\n/g, '<br>');
+  document.getElementById('cta-highlight').textContent = cta.highlight || '';
 }
 
 function renderList(id, items) {
