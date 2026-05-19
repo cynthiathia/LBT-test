@@ -279,15 +279,15 @@ body {
   background: rgba(201,169,110,0.18);
   border: 1px solid rgba(201,169,110,0.45);
   color: var(--gold);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  font-style: italic;
   cursor: help;
   margin-left: 6px;
   position: relative;
-  font-family: serif;
+  font-family: var(--font);
   vertical-align: middle;
   user-select: none;
+  line-height: 1;
 }
 
 .info-tip::after {
@@ -303,8 +303,7 @@ body {
   border-radius: 8px;
   font-size: 12px;
   font-weight: 400;
-  font-style: normal;
-  font-family: inherit;
+  font-family: var(--font);
   white-space: pre-wrap;
   width: 280px;
   text-align: left;
@@ -313,6 +312,7 @@ body {
   transition: opacity 0.18s;
   z-index: 100;
   line-height: 1.55;
+  letter-spacing: 0;
   box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
