@@ -359,13 +359,16 @@ body {
   border-radius: 4px;
 }
 
-#type-table {
+#type-table,
+#click-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
+  table-layout: fixed;
 }
 
-#type-table thead th {
+#type-table thead th,
+#click-table thead th {
   text-align: left;
   padding: 0 10px 10px;
   color: var(--ink-light);
@@ -376,19 +379,24 @@ body {
   background: var(--bg-card);
 }
 
-#type-table tbody tr {
+#type-table tbody tr,
+#click-table tbody tr {
   border-bottom: 1px solid rgba(201,169,110,0.07);
   transition: background 0.15s;
 }
 
-#type-table tbody tr:hover {
+#type-table tbody tr:hover,
+#click-table tbody tr:hover {
   background: var(--bg-card2);
 }
 
-#type-table td {
+#type-table td,
+#click-table td {
   padding: 9px 10px;
   color: var(--cream);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 #type-table td:first-child {
@@ -397,6 +405,17 @@ body {
   font-size: 12px;
   letter-spacing: 0.5px;
 }
+
+/* 컬럼 폭 — 유형 테이블 (4컬럼: 유형/이름/참여/비율) */
+#type-table th:nth-child(1), #type-table td:nth-child(1) { width: 16%; }
+#type-table th:nth-child(2), #type-table td:nth-child(2) { width: 36%; }
+#type-table th:nth-child(3), #type-table td:nth-child(3) { width: 16%; }
+#type-table th:nth-child(4), #type-table td:nth-child(4) { width: 32%; }
+
+/* 컬럼 폭 — 클릭 테이블 (3컬럼: 링크/클릭수/클릭률) */
+#click-table th:nth-child(1), #click-table td:nth-child(1) { width: 50%; }
+#click-table th:nth-child(2), #click-table td:nth-child(2) { width: 18%; }
+#click-table th:nth-child(3), #click-table td:nth-child(3) { width: 32%; }
 
 .pct-bar-wrap {
   display: flex;
