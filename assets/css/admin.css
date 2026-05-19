@@ -169,6 +169,104 @@ body {
   gap: 20px;
 }
 
+/* ──────────────────── GLOBAL PERIOD FILTER ──────────────────── */
+
+.period-filter-global {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 20px;
+}
+
+.period-filter-label {
+  font-size: 13px;
+  color: var(--ink-light);
+  font-weight: 600;
+}
+
+.period-buttons {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.period-btn-global {
+  padding: 7px 14px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink-light);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.period-btn-global:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.period-btn-global.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #1A1410;
+  font-weight: 700;
+}
+
+.custom-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 12px;
+  border-left: 1px solid var(--border);
+}
+
+.custom-range input[type="date"] {
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: var(--cream);
+  font-family: inherit;
+  font-size: 13px;
+  color-scheme: dark;
+}
+
+.custom-range-sep {
+  color: var(--ink-light);
+  font-size: 13px;
+}
+
+.btn-custom-apply {
+  padding: 7px 14px;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  color: #1A1410;
+  font-size: 13px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.btn-custom-apply:hover { opacity: 0.85; }
+
+.period-info {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--ink-light);
+}
+
+@media (max-width: 720px) {
+  .period-info { margin-left: 0; width: 100%; }
+  .custom-range { padding-left: 0; border-left: none; flex-wrap: wrap; }
+}
+
 /* ──────────────────── STAT CARDS ──────────────────── */
 
 .stat-cards {

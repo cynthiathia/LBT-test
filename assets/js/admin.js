@@ -36,7 +36,6 @@ function showDashboard() {
   loginWrap.style.display = 'none';
   dashboard.removeAttribute('hidden');
   dashboard.style.display = 'block';
-  // hidden 속성 제거 후 브라우저가 레이아웃을 계산할 시간을 준 뒤 차트 초기화
   requestAnimationFrame(() => requestAnimationFrame(() => initDashboard()));
 }
 
@@ -47,17 +46,14 @@ function showLogin() {
   sessionStorage.removeItem('lbt_admin');
 }
 
-// 초기 상태: 대시보드 숨김
 dashboard.style.display = 'none';
 
-// 세션 유지
 if (sessionStorage.getItem('lbt_admin') === '1') {
   showDashboard();
 }
 
 function tryLogin() {
   const entered = pwInput.value;
-  console.log('입력값:', entered, '/ 길이:', entered.length);
   if (entered === ADMIN_PASSWORD) {
     sessionStorage.setItem('lbt_admin', '1');
     pwError.hidden = true;
@@ -69,35 +65,31 @@ function tryLogin() {
   }
 }
 
-loginForm.addEventListener('submit', (e) => {
-  e.preventDefault();
-  tryLogin();
-});
-
-document.getElementById('login-btn').addEventListener('click', (e) => {
-  e.preventDefault();
-  tryLogin();
-});
-
+loginForm.addEventListener('submit', (e) => { e.preventDefault(); tryLogin(); });
+document.getElementById('login-btn').addEventListener('click', (e) => { e.preventDefault(); tryLogin(); });
 logoutBtn.addEventListener('click', showLogin);
 
-/* ────────── 대시보드 초기화 ────────── */
+/* ────────── 대시보드 상태 ────────── */
 
 let trendChart = null;
 let typeChart  = null;
 let configSaveHandler = null;
-let currentPeriod     = '14';
-let cachedByDate      = {};
-let cachedClicksByDate = {};
-let cachedTotal       = 0;
-let cachedTodayCount  = 0;
+
+let currentPeriod    = '30';     // 'day' | '7' | '30' | 'monthly' | 'custom'
+let customStart      = null;     // 'YYYY-MM-DD'
+let customEnd        = null;
+let cachedStatsV2    = {};
+let cachedClicks     = {};
+
+/* ────────── 초기화 ────────── */
 
 function initDashboard() {
-  // Firebase 실시간 리스너
   db.ref('/').on('value', (snapshot) => {
     const data  = snapshot.val() || {};
     const stats = data.stats   || {};
-    renderStats({ ...(stats.v2 || {}), clicks: stats.clicks || {} });
+    cachedStatsV2 = stats.v2     || {};
+    cachedClicks  = stats.clicks || {};
+    renderAll();
     renderConfig(data.config || {});
     updateTimestamp();
   }, (err) => {
@@ -105,90 +97,202 @@ function initDashboard() {
     alert('Firebase 연결에 실패했습니다.\nfirebase-config.js 설정을 확인해 주세요.');
   });
 
-  // 링크 저장 버튼 (중복 등록 방지)
+  // 링크 저장 버튼
   const saveBtn = document.getElementById('save-config-btn');
   if (configSaveHandler) saveBtn.removeEventListener('click', configSaveHandler);
   configSaveHandler = saveConfig;
   saveBtn.addEventListener('click', configSaveHandler);
 
-  // 기간 필터 버튼
-  document.querySelectorAll('.period-btn').forEach(btn => {
+  // 글로벌 기간 필터 버튼
+  document.querySelectorAll('.period-btn-global').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.period-btn-global').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentPeriod = btn.dataset.period;
-      renderTrendChart(cachedByDate, cachedClicksByDate);
+      const customRange = document.getElementById('custom-range');
+      if (currentPeriod === 'custom') {
+        customRange.hidden = false;
+        if (!customStart) {
+          const today = new Date();
+          const ago   = new Date(); ago.setDate(today.getDate() - 6);
+          customStart = getDateKey(ago);
+          customEnd   = getDateKey(today);
+          document.getElementById('custom-start').value = customStart;
+          document.getElementById('custom-end').value   = customEnd;
+        }
+      } else {
+        customRange.hidden = true;
+      }
+      renderAll();
     });
+  });
+
+  // 사용자지정 적용
+  document.getElementById('custom-apply').addEventListener('click', () => {
+    const s = document.getElementById('custom-start').value;
+    const e = document.getElementById('custom-end').value;
+    if (!s || !e) return;
+    if (s > e) { alert('시작일이 종료일보다 늦을 수 없습니다.'); return; }
+    customStart = s;
+    customEnd   = e;
+    renderAll();
   });
 }
 
-/* ────────── 통계 렌더링 ────────── */
+/* ────────── 기간 범위 계산 ────────── */
 
-function renderStats(stats) {
-  const total  = stats.total  || 0;
-  const byType = stats.byType || {};
-  const byDate = stats.byDate || {};
-  const clicks = stats.clicks || {};
+function getDateRange() {
+  const today = new Date();
+  const todayKey = getDateKey(today);
 
-  const today      = getDateKey();
-  const todayCount = byDate[today] || 0;
-
-  cachedByDate     = byDate;
-  cachedTotal      = total;
-  cachedTodayCount = todayCount;
-
-  document.getElementById('total-count').textContent = total.toLocaleString('ko-KR');
-  document.getElementById('today-count').textContent = todayCount.toLocaleString('ko-KR');
-
-  // 최다 / 최소 유형
-  const sortedTypes = Object.entries(byType).sort((a, b) => b[1] - a[1]);
-  if (sortedTypes.length > 0) {
-    const [topCode, topVal] = sortedTypes[0];
-    const [botCode, botVal] = sortedTypes[sortedTypes.length - 1];
-    document.getElementById('top-type').textContent =
-      `${topCode}\n${TYPE_NAMES[topCode] || ''} (${topVal.toLocaleString('ko-KR')}명)`;
-    document.getElementById('bottom-type').textContent =
-      `${botCode}\n${TYPE_NAMES[botCode] || ''} (${botVal.toLocaleString('ko-KR')}명)`;
+  if (currentPeriod === 'day') {
+    return { start: todayKey, end: todayKey, days: 1, mode: 'day' };
   }
+  if (currentPeriod === '7' || currentPeriod === '30') {
+    const num = parseInt(currentPeriod);
+    const s = new Date(today); s.setDate(today.getDate() - (num - 1));
+    return { start: getDateKey(s), end: todayKey, days: num, mode: 'day' };
+  }
+  if (currentPeriod === 'monthly') {
+    const s = new Date(today.getFullYear(), today.getMonth() - 5, 1);
+    return { start: getDateKey(s), end: todayKey, days: daysBetween(s, today) + 1, mode: 'monthly' };
+  }
+  if (currentPeriod === 'custom' && customStart && customEnd) {
+    return { start: customStart, end: customEnd, days: dateKeyDiff(customStart, customEnd) + 1, mode: 'day' };
+  }
+  // fallback
+  return { start: todayKey, end: todayKey, days: 1, mode: 'day' };
+}
 
-  // 클릭 통계 집계
-  let totalClicks = 0;
-  let todayClicks = 0;
-  const clicksByDate = {};
-  const clickRows    = [];
+function daysBetween(a, b) {
+  const ms = b.getTime() - a.getTime();
+  return Math.floor(ms / 86400000);
+}
 
-  Object.entries(clicks).forEach(([key, data]) => {
-    const linkTotal = data.total || 0;
-    const linkToday = (data.byDate || {})[today] || 0;
-    totalClicks += linkTotal;
-    todayClicks += linkToday;
-    Object.entries(data.byDate || {}).forEach(([date, cnt]) => {
-      clicksByDate[date] = (clicksByDate[date] || 0) + cnt;
-    });
-    clickRows.push({ key, total: linkTotal, today: linkToday });
+function dateKeyDiff(s, e) {
+  return daysBetween(new Date(s), new Date(e));
+}
+
+function inRange(dateKey, range) {
+  return dateKey >= range.start && dateKey <= range.end;
+}
+
+/* ────────── 데이터 집계 ────────── */
+
+function aggregateData() {
+  const range      = getDateRange();
+  const byDate     = cachedStatsV2.byDate     || {};
+  const byTypeDate = cachedStatsV2.byTypeDate || {};
+  const clicks     = cachedClicks;
+
+  // 참여자 일별 집계
+  const participantsByDate = {};
+  let participantTotal     = 0;
+  Object.entries(byDate).forEach(([date, cnt]) => {
+    if (inRange(date, range)) {
+      participantsByDate[date] = (participantsByDate[date] || 0) + cnt;
+      participantTotal += cnt;
+    }
   });
 
-  cachedClicksByDate = clicksByDate;
+  // 유형별 집계 (byTypeDate 기반)
+  const typeCounts = {};
+  Object.entries(byTypeDate).forEach(([date, types]) => {
+    if (!inRange(date, range)) return;
+    Object.entries(types).forEach(([code, cnt]) => {
+      typeCounts[code] = (typeCounts[code] || 0) + cnt;
+    });
+  });
 
-  const ctr      = total     > 0 ? ((totalClicks / total)     * 100).toFixed(1) + '%' : '—';
-  const todayCtr = todayCount > 0 ? ((todayClicks / todayCount) * 100).toFixed(1) + '%' : '—';
+  // 클릭 집계
+  const clicksByDate = {};
+  let clickTotal     = 0;
+  const clickRows    = [];
+  Object.entries(clicks).forEach(([linkKey, data]) => {
+    let linkPeriodTotal = 0;
+    Object.entries(data.byDate || {}).forEach(([date, cnt]) => {
+      if (inRange(date, range)) {
+        clicksByDate[date] = (clicksByDate[date] || 0) + cnt;
+        linkPeriodTotal   += cnt;
+        clickTotal        += cnt;
+      }
+    });
+    clickRows.push({ key: linkKey, total: linkPeriodTotal });
+  });
 
-  document.getElementById('total-clicks').textContent = totalClicks.toLocaleString('ko-KR');
-  document.getElementById('click-ctr').textContent    = ctr;
-  document.getElementById('today-clicks').textContent = todayClicks.toLocaleString('ko-KR');
-  document.getElementById('today-ctr').textContent    = todayCtr;
+  return { range, participantTotal, participantsByDate, typeCounts, clickTotal, clicksByDate, clickRows };
+}
 
-  renderClickTable(clickRows, total);
-  renderTypeTable(byType, total);
-  renderTypeChart(byType);
-  renderTrendChart(byDate, clicksByDate);
+/* ────────── 전체 렌더 ────────── */
+
+function renderAll() {
+  const agg = aggregateData();
+  renderPeriodInfo(agg.range);
+  renderStatCards(agg);
+  renderTypeTable(agg.typeCounts, agg.participantTotal);
+  renderTypeChart(agg.typeCounts);
+  renderClickTable(agg.clickRows, agg.participantTotal);
+  renderTrendChart(agg);
+}
+
+function renderPeriodInfo(range) {
+  const el = document.getElementById('period-info');
+  if (!el) return;
+  if (range.start === range.end) {
+    el.textContent = `${range.start} (${range.days}일)`;
+  } else {
+    el.textContent = `${range.start} ~ ${range.end} (${range.days}일)`;
+  }
+}
+
+/* ────────── 통계 카드 ────────── */
+
+function renderStatCards(agg) {
+  const { participantTotal, typeCounts, clickTotal, clickRows, range } = agg;
+
+  document.getElementById('period-participants').textContent = participantTotal.toLocaleString('ko-KR');
+
+  const sorted = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
+  if (sorted.length > 0) {
+    const [topCode, topVal] = sorted[0];
+    const [botCode, botVal] = sorted[sorted.length - 1];
+    document.getElementById('period-top-type').textContent =
+      `${topCode}\n${TYPE_NAMES[topCode] || ''} (${topVal.toLocaleString('ko-KR')}명)`;
+    document.getElementById('period-bottom-type').textContent =
+      `${botCode}\n${TYPE_NAMES[botCode] || ''} (${botVal.toLocaleString('ko-KR')}명)`;
+  } else {
+    document.getElementById('period-top-type').textContent    = '데이터 없음';
+    document.getElementById('period-bottom-type').textContent = '데이터 없음';
+  }
+
+  const avgParticipants = range.days > 0 ? (participantTotal / range.days).toFixed(1) : '0';
+  document.getElementById('period-avg-participants').textContent = avgParticipants;
+
+  document.getElementById('period-clicks').textContent = clickTotal.toLocaleString('ko-KR');
+
+  const ctr = participantTotal > 0
+    ? ((clickTotal / participantTotal) * 100).toFixed(1) + '%'
+    : '—';
+  document.getElementById('period-ctr').textContent = ctr;
+
+  const avgClicks = range.days > 0 ? (clickTotal / range.days).toFixed(1) : '0';
+  document.getElementById('period-avg-clicks').textContent = avgClicks;
+
+  const sortedLinks = [...clickRows].sort((a, b) => b.total - a.total).filter(r => r.total > 0);
+  if (sortedLinks.length > 0) {
+    const top = sortedLinks[0];
+    document.getElementById('period-top-link').textContent =
+      `${top.key.replace(/_/g, ' ')} (${top.total.toLocaleString('ko-KR')})`;
+  } else {
+    document.getElementById('period-top-link').textContent = '데이터 없음';
+  }
 }
 
 /* ────────── 유형 테이블 ────────── */
 
-function renderTypeTable(byType, total) {
+function renderTypeTable(typeCounts, total) {
   const rows = Object.keys(TYPE_NAMES)
-    .map(code => ({ code, name: TYPE_NAMES[code], count: byType[code] || 0 }))
+    .map(code => ({ code, name: TYPE_NAMES[code], count: typeCounts[code] || 0 }))
     .sort((a, b) => b.count - a.count);
 
   const maxCount = rows[0]?.count || 1;
@@ -214,9 +318,9 @@ function renderTypeTable(byType, total) {
 
 /* ────────── 유형 분포 차트 ────────── */
 
-function renderTypeChart(byType) {
+function renderTypeChart(typeCounts) {
   const labels = Object.keys(TYPE_NAMES);
-  const data   = labels.map(code => byType[code] || 0);
+  const data   = labels.map(code => typeCounts[code] || 0);
 
   const ctx = document.getElementById('type-chart').getContext('2d');
   if (typeChart) typeChart.destroy();
@@ -266,21 +370,22 @@ function renderClickTable(clickRows, total) {
   const tbody = document.getElementById('click-table-body');
   if (!tbody) return;
 
-  if (clickRows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#7A6A58;padding:20px;">클릭 데이터 없음</td></tr>';
+  const filtered = clickRows.filter(r => r.total > 0);
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#7A6A58;padding:20px;">기간 내 클릭 데이터 없음</td></tr>';
     return;
   }
 
-  tbody.innerHTML = clickRows
+  tbody.innerHTML = filtered
     .sort((a, b) => b.total - a.total)
-    .map(({ key, total: cnt, today: todayCnt }) => {
+    .map(({ key, total: cnt }) => {
       const ctr      = total > 0 ? ((cnt / total) * 100).toFixed(1) : '0.0';
       const barWidth = Math.min(parseFloat(ctr) * 2, 100);
       const label    = key.replace(/_/g, ' ');
       return `<tr>
         <td>${label}</td>
         <td>${cnt.toLocaleString('ko-KR')}</td>
-        <td>${todayCnt.toLocaleString('ko-KR')}</td>
         <td>
           <div class="pct-bar-wrap">
             <div class="pct-bar-track">
@@ -295,37 +400,41 @@ function renderClickTable(clickRows, total) {
 
 /* ────────── 일별 추이 차트 ────────── */
 
-function renderTrendChart(byDate, byClickDate = {}) {
-  const days        = [];
+function renderTrendChart(agg) {
+  const { range, participantsByDate, clicksByDate } = agg;
+  const labels      = [];
   const counts      = [];
   const clickCounts = [];
 
-  if (currentPeriod === 'monthly') {
+  if (range.mode === 'monthly') {
+    // 최근 6개월 월별 집계
+    const today = new Date();
     for (let i = 5; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(1);
-      d.setMonth(d.getMonth() - i);
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
       const monthKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-      days.push(monthKey.slice(5) + '월');
+      labels.push(monthKey.slice(5) + '월');
       let mTotal = 0, mClicks = 0;
-      Object.entries(byDate).forEach(([date, cnt]) => {
+      Object.entries(participantsByDate).forEach(([date, cnt]) => {
         if (date.startsWith(monthKey)) mTotal += cnt;
       });
-      Object.entries(byClickDate).forEach(([date, cnt]) => {
+      Object.entries(clicksByDate).forEach(([date, cnt]) => {
         if (date.startsWith(monthKey)) mClicks += cnt;
       });
       counts.push(mTotal);
       clickCounts.push(mClicks);
     }
   } else {
-    const numDays = parseInt(currentPeriod) || 14;
-    for (let i = numDays - 1; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
+    // 일별
+    const start = new Date(range.start);
+    const end   = new Date(range.end);
+    const days  = daysBetween(start, end) + 1;
+    for (let i = 0; i < days; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
       const key = getDateKey(d);
-      days.push(key.slice(5).replace('-', '/'));
-      counts.push(byDate[key] || 0);
-      clickCounts.push(byClickDate[key] || 0);
+      labels.push(key.slice(5).replace('-', '/'));
+      counts.push(participantsByDate[key] || 0);
+      clickCounts.push(clicksByDate[key] || 0);
     }
   }
 
@@ -335,7 +444,7 @@ function renderTrendChart(byDate, byClickDate = {}) {
   trendChart = new Chart(ctx, {
     type: 'line',
     data: {
-      labels: days,
+      labels,
       datasets: [
         {
           label: '참여자 수',
@@ -424,7 +533,6 @@ function renderConfig(config) {
   linkRowsEl.innerHTML = '';
   const links = Array.isArray(config.links) ? config.links : [];
 
-  // 저장된 링크가 없으면 기본 행 2개
   if (links.length === 0) {
     linkRowsEl.appendChild(createLinkRow('콘서트 예매', ''));
     linkRowsEl.appendChild(createLinkRow('신간 구매', ''));
@@ -461,7 +569,6 @@ function saveConfig() {
 /* ────────── 유틸 ────────── */
 
 function getDateKey(date = new Date()) {
-  // YYYY-MM-DD (로컬 시간 기준)
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');

@@ -48,57 +48,68 @@
 
     <main class="dash-main">
 
+      <!-- 글로벌 기간 필터 -->
+      <div class="period-filter-global">
+        <div class="period-filter-label">기간:</div>
+        <div class="period-buttons">
+          <button class="period-btn-global" data-period="day">당일</button>
+          <button class="period-btn-global" data-period="7">7일</button>
+          <button class="period-btn-global active" data-period="30">30일</button>
+          <button class="period-btn-global" data-period="monthly">월별</button>
+          <button class="period-btn-global" data-period="custom">사용자지정</button>
+        </div>
+        <div class="custom-range" id="custom-range" hidden>
+          <input type="date" id="custom-start">
+          <span class="custom-range-sep">~</span>
+          <input type="date" id="custom-end">
+          <button class="btn-custom-apply" id="custom-apply">적용</button>
+        </div>
+        <div class="period-info" id="period-info"></div>
+      </div>
+
       <!-- 요약 카드 -->
       <div class="stat-cards">
         <div class="stat-card">
-          <div class="stat-label">총 참여자</div>
-          <div class="stat-value" id="total-count">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">오늘 참여자</div>
-          <div class="stat-value" id="today-count">—</div>
+          <div class="stat-label">참여자</div>
+          <div class="stat-value" id="period-participants">—</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">최다 유형</div>
-          <div class="stat-value sm" id="top-type">—</div>
+          <div class="stat-value sm" id="period-top-type">—</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">최소 유형</div>
-          <div class="stat-value sm" id="bottom-type">—</div>
+          <div class="stat-value sm" id="period-bottom-type">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">일평균 참여자</div>
+          <div class="stat-value" id="period-avg-participants">—</div>
         </div>
       </div>
 
       <!-- 클릭 통계 카드 -->
       <div class="stat-cards">
         <div class="stat-card">
-          <div class="stat-label">총 링크 클릭</div>
-          <div class="stat-value" id="total-clicks">—</div>
+          <div class="stat-label">링크 클릭</div>
+          <div class="stat-value" id="period-clicks">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">전체 클릭률</div>
-          <div class="stat-value sm" id="click-ctr">—</div>
+          <div class="stat-label">클릭률</div>
+          <div class="stat-value sm" id="period-ctr">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">오늘 클릭</div>
-          <div class="stat-value" id="today-clicks">—</div>
+          <div class="stat-label">일평균 클릭</div>
+          <div class="stat-value" id="period-avg-clicks">—</div>
         </div>
         <div class="stat-card">
-          <div class="stat-label">오늘 클릭률</div>
-          <div class="stat-value sm" id="today-ctr">—</div>
+          <div class="stat-label">최다 클릭 링크</div>
+          <div class="stat-value sm" id="period-top-link">—</div>
         </div>
       </div>
 
       <!-- 일별 추이 (전체 너비) -->
       <div class="chart-card wide">
-        <div class="chart-title">
-          일별 참여자 추이
-          <div class="period-filter">
-            <button class="period-btn" data-period="7">7일</button>
-            <button class="period-btn active" data-period="14">14일</button>
-            <button class="period-btn" data-period="30">30일</button>
-            <button class="period-btn" data-period="monthly">월별</button>
-          </div>
-        </div>
+        <div class="chart-title">참여자 / 링크 클릭 추이</div>
         <div class="chart-wrap">
           <canvas id="trend-chart"></canvas>
         </div>
@@ -139,12 +150,11 @@
             <thead>
               <tr>
                 <th>링크</th>
-                <th>총 클릭</th>
-                <th>오늘</th>
+                <th>클릭 수</th>
                 <th>클릭률</th>
               </tr>
             </thead>
-            <tbody id="click-table-body"><tr><td colspan="4" style="text-align:center;color:#7A6A58;padding:20px;">데이터 없음</td></tr></tbody>
+            <tbody id="click-table-body"><tr><td colspan="3" style="text-align:center;color:#7A6A58;padding:20px;">데이터 없음</td></tr></tbody>
           </table>
         </div>
       </div>

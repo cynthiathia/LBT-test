@@ -258,9 +258,10 @@ function trackStat(code) {
   try {
     const today   = getDateKey();
     const updates = {};
-    updates[`stats/v2/byType/${code}`]  = firebase.database.ServerValue.increment(1);
-    updates[`stats/v2/byDate/${today}`] = firebase.database.ServerValue.increment(1);
-    updates['stats/v2/total']           = firebase.database.ServerValue.increment(1);
+    updates[`stats/v2/byType/${code}`]              = firebase.database.ServerValue.increment(1);
+    updates[`stats/v2/byDate/${today}`]             = firebase.database.ServerValue.increment(1);
+    updates[`stats/v2/byTypeDate/${today}/${code}`] = firebase.database.ServerValue.increment(1);
+    updates['stats/v2/total']                       = firebase.database.ServerValue.increment(1);
     db.ref().update(updates);
   } catch (e) {
     // 통계 기록 실패 시 무시
