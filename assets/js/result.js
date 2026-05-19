@@ -42,7 +42,7 @@ async function init() {
   }
 
   // lbt_data.json 로드
-  const res  = await fetch('lbt_data.json?v=6');
+  const res  = await fetch('lbt_data.json?v=7');
   const data = await res.json();
   const type = data.types[typeCode];
 
