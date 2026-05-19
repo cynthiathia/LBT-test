@@ -254,14 +254,26 @@ async function loadExternalLinks() {
 
 /* ────────── 통계 기록 ────────── */
 
+function getUserId() {
+  let id = localStorage.getItem('lbt_user_id');
+  if (!id) {
+    id = (crypto.randomUUID && crypto.randomUUID()) ||
+         ('u-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10));
+    localStorage.setItem('lbt_user_id', id);
+  }
+  return id;
+}
+
 function trackStat(code) {
   try {
     const today   = getDateKey();
+    const userId  = getUserId();
     const updates = {};
-    updates[`stats/v2/byType/${code}`]              = firebase.database.ServerValue.increment(1);
-    updates[`stats/v2/byDate/${today}`]             = firebase.database.ServerValue.increment(1);
-    updates[`stats/v2/byTypeDate/${today}/${code}`] = firebase.database.ServerValue.increment(1);
-    updates['stats/v2/total']                       = firebase.database.ServerValue.increment(1);
+    updates[`stats/v2/byType/${code}`]                  = firebase.database.ServerValue.increment(1);
+    updates[`stats/v2/byDate/${today}`]                 = firebase.database.ServerValue.increment(1);
+    updates[`stats/v2/byTypeDate/${today}/${code}`]     = firebase.database.ServerValue.increment(1);
+    updates['stats/v2/total']                           = firebase.database.ServerValue.increment(1);
+    updates[`stats/v2/uniqueByDate/${today}/${userId}`] = true;
     db.ref().update(updates);
   } catch (e) {
     // 통계 기록 실패 시 무시

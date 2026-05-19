@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="favicon_admin.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/admin.css">
+  <link rel="stylesheet" href="assets/css/admin.css?v=7">
 </head>
 <body>
 
@@ -70,8 +70,12 @@
       <!-- 요약 카드 -->
       <div class="stat-cards">
         <div class="stat-card">
-          <div class="stat-label">참여자</div>
-          <div class="stat-value" id="period-participants">—</div>
+          <div class="stat-label">응답 수</div>
+          <div class="stat-value" id="period-responses">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">고유 참여자</div>
+          <div class="stat-value" id="period-unique-users">—</div>
         </div>
         <div class="stat-card">
           <div class="stat-label">최다 유형</div>
@@ -81,14 +85,14 @@
           <div class="stat-label">최소 유형</div>
           <div class="stat-value sm" id="period-bottom-type">—</div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">일평균 참여자</div>
-          <div class="stat-value" id="period-avg-participants">—</div>
-        </div>
       </div>
 
       <!-- 클릭 통계 카드 -->
       <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-label">일평균 응답</div>
+          <div class="stat-value" id="period-avg-responses">—</div>
+        </div>
         <div class="stat-card">
           <div class="stat-label">링크 클릭</div>
           <div class="stat-value" id="period-clicks">—</div>
@@ -100,10 +104,6 @@
         <div class="stat-card">
           <div class="stat-label">일평균 클릭</div>
           <div class="stat-value" id="period-avg-clicks">—</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">최다 클릭 링크</div>
-          <div class="stat-value sm" id="period-top-link">—</div>
         </div>
       </div>
 
@@ -179,8 +179,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <script src="assets/js/firebase-config.js"></script>
-  <script src="assets/js/admin-config.js"></script>
-  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/firebase-config.js?v=7"></script>
+  <script src="assets/js/admin-config.js?v=7"></script>
+  <script src="assets/js/admin.js?v=7"></script>
 </body>
 </html>

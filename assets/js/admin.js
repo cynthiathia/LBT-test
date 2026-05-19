@@ -180,18 +180,19 @@ function inRange(dateKey, range) {
 /* ────────── 데이터 집계 ────────── */
 
 function aggregateData() {
-  const range      = getDateRange();
-  const byDate     = cachedStatsV2.byDate     || {};
-  const byTypeDate = cachedStatsV2.byTypeDate || {};
-  const clicks     = cachedClicks;
+  const range        = getDateRange();
+  const byDate       = cachedStatsV2.byDate       || {};
+  const byTypeDate   = cachedStatsV2.byTypeDate   || {};
+  const uniqueByDate = cachedStatsV2.uniqueByDate || {};
+  const clicks       = cachedClicks;
 
-  // 참여자 일별 집계
+  // 응답 수 일별 집계
   const participantsByDate = {};
-  let participantTotal     = 0;
+  let responseTotal        = 0;
   Object.entries(byDate).forEach(([date, cnt]) => {
     if (inRange(date, range)) {
       participantsByDate[date] = (participantsByDate[date] || 0) + cnt;
-      participantTotal += cnt;
+      responseTotal += cnt;
     }
   });
 
@@ -203,6 +204,14 @@ function aggregateData() {
       typeCounts[code] = (typeCounts[code] || 0) + cnt;
     });
   });
+
+  // 고유 참여자 집계 (uniqueByDate 기반, userId 합집합)
+  const uniqueUsers = new Set();
+  Object.entries(uniqueByDate).forEach(([date, users]) => {
+    if (!inRange(date, range)) return;
+    Object.keys(users || {}).forEach(uid => uniqueUsers.add(uid));
+  });
+  const uniqueCount = uniqueUsers.size;
 
   // 클릭 집계
   const clicksByDate = {};
@@ -220,7 +229,7 @@ function aggregateData() {
     clickRows.push({ key: linkKey, total: linkPeriodTotal });
   });
 
-  return { range, participantTotal, participantsByDate, typeCounts, clickTotal, clicksByDate, clickRows };
+  return { range, responseTotal, uniqueCount, participantsByDate, typeCounts, clickTotal, clicksByDate, clickRows };
 }
 
 /* ────────── 전체 렌더 ────────── */
@@ -229,9 +238,9 @@ function renderAll() {
   const agg = aggregateData();
   renderPeriodInfo(agg.range);
   renderStatCards(agg);
-  renderTypeTable(agg.typeCounts, agg.participantTotal);
+  renderTypeTable(agg.typeCounts, agg.responseTotal);
   renderTypeChart(agg.typeCounts);
-  renderClickTable(agg.clickRows, agg.participantTotal);
+  renderClickTable(agg.clickRows, agg.responseTotal);
   renderTrendChart(agg);
 }
 
@@ -248,9 +257,10 @@ function renderPeriodInfo(range) {
 /* ────────── 통계 카드 ────────── */
 
 function renderStatCards(agg) {
-  const { participantTotal, typeCounts, clickTotal, clickRows, range } = agg;
+  const { responseTotal, uniqueCount, typeCounts, clickTotal, range } = agg;
 
-  document.getElementById('period-participants').textContent = participantTotal.toLocaleString('ko-KR');
+  document.getElementById('period-responses').textContent     = responseTotal.toLocaleString('ko-KR');
+  document.getElementById('period-unique-users').textContent  = uniqueCount.toLocaleString('ko-KR');
 
   const sorted = Object.entries(typeCounts).sort((a, b) => b[1] - a[1]);
   if (sorted.length > 0) {
@@ -265,27 +275,18 @@ function renderStatCards(agg) {
     document.getElementById('period-bottom-type').textContent = '데이터 없음';
   }
 
-  const avgParticipants = range.days > 0 ? (participantTotal / range.days).toFixed(1) : '0';
-  document.getElementById('period-avg-participants').textContent = avgParticipants;
+  const avgResponses = range.days > 0 ? (responseTotal / range.days).toFixed(1) : '0';
+  document.getElementById('period-avg-responses').textContent = avgResponses;
 
   document.getElementById('period-clicks').textContent = clickTotal.toLocaleString('ko-KR');
 
-  const ctr = participantTotal > 0
-    ? ((clickTotal / participantTotal) * 100).toFixed(1) + '%'
+  const ctr = responseTotal > 0
+    ? ((clickTotal / responseTotal) * 100).toFixed(1) + '%'
     : '—';
   document.getElementById('period-ctr').textContent = ctr;
 
   const avgClicks = range.days > 0 ? (clickTotal / range.days).toFixed(1) : '0';
   document.getElementById('period-avg-clicks').textContent = avgClicks;
-
-  const sortedLinks = [...clickRows].sort((a, b) => b.total - a.total).filter(r => r.total > 0);
-  if (sortedLinks.length > 0) {
-    const top = sortedLinks[0];
-    document.getElementById('period-top-link').textContent =
-      `${top.key.replace(/_/g, ' ')} (${top.total.toLocaleString('ko-KR')})`;
-  } else {
-    document.getElementById('period-top-link').textContent = '데이터 없음';
-  }
 }
 
 /* ────────── 유형 테이블 ────────── */
