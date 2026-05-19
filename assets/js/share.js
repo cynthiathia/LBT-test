@@ -23,18 +23,38 @@ document.getElementById('btn-download').addEventListener('click', async () => {
 
   try {
     const card    = document.getElementById('capture-area');
+    const axes    = document.getElementById('axes-section');
     const isLight = document.documentElement.getAttribute('data-theme') === 'light';
     const bgColor = isLight ? '#FAF6F0' : '#0F0E0C';
-    const canvas  = await html2canvas(card, {
+
+    const opts = {
       backgroundColor: bgColor,
       scale: 2,
       useCORS: true,
       allowTaint: true,
-    });
+    };
+
+    const cardCanvas = await html2canvas(card, opts);
+    const axesCanvas = axes ? await html2canvas(axes, opts) : null;
+
+    let finalCanvas = cardCanvas;
+    if (axesCanvas) {
+      const width  = Math.max(cardCanvas.width, axesCanvas.width);
+      const height = cardCanvas.height + axesCanvas.height;
+      const merged = document.createElement('canvas');
+      merged.width  = width;
+      merged.height = height;
+      const ctx = merged.getContext('2d');
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(cardCanvas, (width - cardCanvas.width) / 2, 0);
+      ctx.drawImage(axesCanvas, (width - axesCanvas.width) / 2, cardCanvas.height);
+      finalCanvas = merged;
+    }
 
     const link      = document.createElement('a');
     link.download   = `LBT_${typeCode}_결과.png`;
-    link.href       = canvas.toDataURL('image/png');
+    link.href       = finalCanvas.toDataURL('image/png');
     link.click();
   } catch (e) {
     alert('이미지 저장에 실패했습니다. 스크린샷을 사용해 주세요.');
