@@ -3,14 +3,27 @@
 const BASE_URL   = window.location.origin + window.location.pathname.replace('result.html', '');
 const resultUrl  = window.location.href;
 
+/* 사용자 자발 공유 URL에 utm_source 자동 부착 */
+function withUtm(url, source) {
+  try {
+    const u = new URL(url, window.location.origin);
+    u.searchParams.set('utm_source', source);
+    return u.toString();
+  } catch {
+    const sep = url.includes('?') ? '&' : '?';
+    return `${url}${sep}utm_source=${encodeURIComponent(source)}`;
+  }
+}
+
 /* ── 링크 복사 ── */
 
 document.getElementById('btn-copy').addEventListener('click', async () => {
+  const shareUrl = withUtm(resultUrl, 'user_link');
   try {
-    await navigator.clipboard.writeText(resultUrl);
+    await navigator.clipboard.writeText(shareUrl);
     showToast('링크가 복사되었습니다!');
   } catch {
-    prompt('아래 링크를 복사하세요:', resultUrl);
+    prompt('아래 링크를 복사하세요:', shareUrl);
   }
 });
 
@@ -85,7 +98,9 @@ document.getElementById('btn-kakao').addEventListener('click', () => {
   const featuresEl = document.querySelector('#result-features li');
   const firstFeat  = featuresEl ? featuresEl.textContent : '';
 
-  const imgUrl = `${window.location.origin}/type_img/${typeCode}.png`;
+  const imgUrl       = `${window.location.origin}/type_img/${typeCode}.png`;
+  const sharedResult = withUtm(resultUrl, 'user_kakao');
+  const sharedIntro  = withUtm(`${BASE_URL}index.html`, 'user_kakao');
 
   const doShare = (w, h) => {
     Kakao.Share.sendDefault({
@@ -97,14 +112,14 @@ document.getElementById('btn-kakao').addEventListener('click', () => {
         imageWidth:  w,
         imageHeight: h,
         link: {
-          mobileWebUrl: resultUrl,
-          webUrl:       resultUrl,
+          mobileWebUrl: sharedResult,
+          webUrl:       sharedResult,
         },
       },
       buttons: [
         {
           title: '나도 테스트하기',
-          link: { mobileWebUrl: `${BASE_URL}index.html`, webUrl: `${BASE_URL}index.html` },
+          link: { mobileWebUrl: sharedIntro, webUrl: sharedIntro },
         },
       ],
     });
