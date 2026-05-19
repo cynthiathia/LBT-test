@@ -54,6 +54,7 @@ async function init() {
   renderResult(type, data.meta);
   renderAxesChart();
   await loadExternalLinks();
+  loadConcertVideo();
   trackStat(typeCode);
   loadLiveCounter();
   sessionStorage.removeItem('lbt_result_type');
@@ -268,6 +269,42 @@ function trackStat(code) {
     db.ref().update(updates);
   } catch (e) {
     // 통계 기록 실패 시 무시
+  }
+}
+
+/* ────────── 콘서트 홍보 영상 (YouTube) ────────── */
+
+function extractYouTubeId(url) {
+  if (!url) return null;
+  const trimmed = String(url).trim();
+  // 이미 ID만 입력한 경우 (11자)
+  if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+  const m = trimmed.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : null;
+}
+
+async function loadConcertVideo() {
+  const wrap      = document.getElementById('video-wrap');
+  const container = document.getElementById('concert-video');
+  if (!wrap || !container) return;
+  try {
+    const snap = await db.ref('/config/concertVideoUrl').once('value');
+    const url  = snap.val();
+    const id   = extractYouTubeId(url);
+    if (!id) { container.hidden = true; return; }
+
+    const iframe = document.createElement('iframe');
+    iframe.src   = `https://www.youtube.com/embed/${id}?rel=0`;
+    iframe.title = '콘서트 홍보 영상';
+    iframe.loading = 'lazy';
+    iframe.allow = 'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+    iframe.allowFullscreen = true;
+
+    wrap.innerHTML = '';
+    wrap.appendChild(iframe);
+    container.hidden = false;
+  } catch (e) {
+    container.hidden = true;
   }
 }
 

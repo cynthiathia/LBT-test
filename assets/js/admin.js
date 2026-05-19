@@ -103,6 +103,7 @@ function initDashboard() {
     renderAll();
     renderConfig(data.config || {});
     renderReservation(data.config || {});
+    renderConcertVideo(data.config || {});
     updateTimestamp();
   }, (err) => {
     console.error('Firebase 읽기 오류:', err);
@@ -119,6 +120,12 @@ function initDashboard() {
   const resBtn = document.getElementById('save-reservation-btn');
   if (resBtn) {
     resBtn.onclick = saveReservation;
+  }
+
+  // 영상 URL 저장 버튼
+  const vidBtn = document.getElementById('save-video-btn');
+  if (vidBtn) {
+    vidBtn.onclick = saveConcertVideo;
   }
 
   // 글로벌 기간 필터 버튼
@@ -651,6 +658,35 @@ function saveReservation() {
     count,
     lastUpdate: firebase.database.ServerValue.TIMESTAMP,
   })
+    .then(() => {
+      msg.hidden = false;
+      setTimeout(() => { msg.hidden = true; }, 2500);
+    })
+    .catch((err) => {
+      alert('저장 실패: ' + err.message);
+    })
+    .finally(() => {
+      btn.disabled = false;
+    });
+}
+
+/* ────────── 콘서트 영상 URL ────────── */
+
+function renderConcertVideo(config) {
+  const input = document.getElementById('video-url-input');
+  if (!input) return;
+  if (document.activeElement === input) return; // 입력 중이면 덮어쓰지 않음
+  input.value = config.concertVideoUrl || '';
+}
+
+function saveConcertVideo() {
+  const input = document.getElementById('video-url-input');
+  const btn   = document.getElementById('save-video-btn');
+  const msg   = document.getElementById('video-save-msg');
+  const url   = input.value.trim();
+
+  btn.disabled = true;
+  db.ref('/config/concertVideoUrl').set(url || null)
     .then(() => {
       msg.hidden = false;
       setTimeout(() => { msg.hidden = true; }, 2500);

@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="favicon_admin.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/admin.css?v=14">
+  <link rel="stylesheet" href="assets/css/admin.css?v=15">
 </head>
 <body>
 
@@ -165,6 +165,17 @@
         </div>
       </div>
 
+      <!-- 콘서트 홍보 영상 설정 -->
+      <div class="config-card">
+        <div class="config-title">콘서트 홍보 영상 (YouTube)</div>
+        <div class="reservation-row">
+          <input type="url" id="video-url-input" placeholder="https://youtu.be/XXXXXXXXXXX 또는 youtube.com/watch?v=...">
+          <button id="save-video-btn" class="btn-save">저장</button>
+          <span id="video-save-msg" class="save-msg" hidden>✓ 저장되었습니다.</span>
+        </div>
+        <p class="reservation-note">결과 페이지 외부 링크 아래에 노출됩니다. 비워두면 영상 영역이 숨겨집니다.</p>
+      </div>
+
       <!-- LIVE 카운터 설정 -->
       <div class="config-card">
         <div class="config-title">LIVE 카운터 — 콘서트 예매자 수</div>
@@ -197,8 +208,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <script src="assets/js/firebase-config.js?v=14"></script>
-  <script src="assets/js/admin-config.js?v=14"></script>
-  <script src="assets/js/admin.js?v=14"></script>
+  <script src="assets/js/firebase-config.js?v=15"></script>
+  <script src="assets/js/admin-config.js?v=15"></script>
+  <script src="assets/js/admin.js?v=15"></script>
 </body>
 </html>
