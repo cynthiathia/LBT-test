@@ -91,12 +91,13 @@ function initDashboard() {
 
     // legacy + v2 — 응답 수는 머지된 byDate, 유형 분포는 비례 추정용으로 분리 보관
     cachedStats = {
-      byDate:       mergeMaps(statsRaw.byDate || {}, v2.byDate || {}),
-      legacyByDate: statsRaw.byDate || {},
-      legacyByType: statsRaw.byType || {},
-      v2ByDate:     v2.byDate       || {},
-      v2ByType:     v2.byType       || {},
-      uniqueByDate: v2.uniqueByDate || {},
+      byDate:           mergeMaps(statsRaw.byDate || {}, v2.byDate || {}),
+      legacyByDate:     statsRaw.byDate || {},
+      legacyByType:     statsRaw.byType || {},
+      v2ByDate:         v2.byDate       || {},
+      v2ByType:         v2.byType       || {},
+      uniqueByDate:     v2.uniqueByDate || {},
+      referrersByDate:  v2.referrersByDate || {},
     };
     cachedClicks = statsRaw.clicks || {};
 
@@ -298,7 +299,23 @@ function aggregateData() {
     clickRows.push({ key: linkKey, total: linkPeriodTotal });
   });
 
-  return { range, responseTotal, uniqueCount, participantsByDate, typeCounts, clickTotal, clicksByDate, clickRows };
+  // 유입 경로 집계
+  const referrersByDate = cachedStats.referrersByDate || {};
+  const referrerCounts  = {};
+  let   referrerTotal   = 0;
+  Object.entries(referrersByDate).forEach(([date, sources]) => {
+    if (!inRange(date, range)) return;
+    Object.entries(sources || {}).forEach(([src, cnt]) => {
+      referrerCounts[src] = (referrerCounts[src] || 0) + cnt;
+      referrerTotal      += cnt;
+    });
+  });
+
+  return {
+    range, responseTotal, uniqueCount, participantsByDate, typeCounts,
+    clickTotal, clicksByDate, clickRows,
+    referrerCounts, referrerTotal,
+  };
 }
 
 /* ────────── 전체 렌더 ────────── */
@@ -310,6 +327,7 @@ function renderAll() {
   renderTypeTable(agg.typeCounts, agg.responseTotal);
   renderTypeChart(agg.typeCounts);
   renderClickTable(agg.clickRows, agg.responseTotal);
+  renderReferrerTable(agg.referrerCounts, agg.referrerTotal);
   renderTrendChart(agg);
 }
 
@@ -466,6 +484,64 @@ function renderClickTable(clickRows, total) {
         </td>
       </tr>`;
     }).join('');
+}
+
+/* ────────── 유입 경로 표 ────────── */
+
+const REFERRER_LABELS = {
+  direct:    '직접 / 북마크',
+  kakao:     '카카오톡',
+  naver:     '네이버',
+  google:    '구글',
+  instagram: '인스타그램',
+  facebook:  '페이스북',
+  youtube:   '유튜브',
+  twitter:   '트위터 / X',
+  threads:   '스레드',
+  tiktok:    '틱톡',
+  daum:      '다음',
+  bing:      '빙',
+  linkedin:  '링크드인',
+  unknown:   '알 수 없음',
+};
+
+function formatReferrerLabel(key) {
+  if (REFERRER_LABELS[key]) return REFERRER_LABELS[key];
+  if (key.startsWith('utm_')) return 'UTM: ' + key.slice(4);
+  return key.replace(/_/g, '.');
+}
+
+function renderReferrerTable(counts, total) {
+  const tbody = document.getElementById('referrer-table-body');
+  if (!tbody) return;
+
+  const rows = Object.entries(counts || {})
+    .filter(([, n]) => n > 0)
+    .sort((a, b) => b[1] - a[1]);
+
+  if (rows.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;color:#7A6A58;padding:20px;">기간 내 유입 데이터 없음</td></tr>';
+    return;
+  }
+
+  const maxCount = rows[0][1];
+
+  tbody.innerHTML = rows.map(([key, cnt]) => {
+    const pct      = total > 0 ? ((cnt / total) * 100).toFixed(1) : '0.0';
+    const barWidth = Math.round((cnt / maxCount) * 100);
+    return `<tr>
+      <td>${formatReferrerLabel(key)}</td>
+      <td>${cnt.toLocaleString('ko-KR')}</td>
+      <td>
+        <div class="pct-bar-wrap">
+          <div class="pct-bar-track">
+            <div class="pct-bar" style="width:${barWidth}%"></div>
+          </div>
+          <span class="pct-text">${pct}%</span>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
 }
 
 /* ────────── 일별 추이 차트 ────────── */

@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="favicon_admin.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/admin.css?v=16">
+  <link rel="stylesheet" href="assets/css/admin.css?v=17">
 </head>
 <body>
 
@@ -165,6 +165,23 @@
         </div>
       </div>
 
+      <!-- 유입 경로 -->
+      <div class="chart-card">
+        <div class="chart-title">유입 경로</div>
+        <div class="type-table-wrap">
+          <table id="referrer-table">
+            <thead>
+              <tr>
+                <th>출처</th>
+                <th>유입 수</th>
+                <th>비율</th>
+              </tr>
+            </thead>
+            <tbody id="referrer-table-body"><tr><td colspan="3" style="text-align:center;color:#7A6A58;padding:20px;">데이터 없음</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- 콘서트 홍보 영상 설정 -->
       <div class="config-card">
         <div class="config-title">콘서트 홍보 영상 (YouTube)</div>
@@ -208,8 +225,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <script src="assets/js/firebase-config.js?v=16"></script>
-  <script src="assets/js/admin-config.js?v=16"></script>
-  <script src="assets/js/admin.js?v=16"></script>
+  <script src="assets/js/firebase-config.js?v=17"></script>
+  <script src="assets/js/admin-config.js?v=17"></script>
+  <script src="assets/js/admin.js?v=17"></script>
 </body>
 </html>

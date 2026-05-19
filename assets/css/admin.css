@@ -431,7 +431,8 @@ body {
 }
 
 #type-table,
-#click-table {
+#click-table,
+#referrer-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 13px;
@@ -439,7 +440,8 @@ body {
 }
 
 #type-table thead th,
-#click-table thead th {
+#click-table thead th,
+#referrer-table thead th {
   text-align: left;
   padding: 0 10px 10px;
   color: var(--ink-light);
@@ -451,18 +453,21 @@ body {
 }
 
 #type-table tbody tr,
-#click-table tbody tr {
+#click-table tbody tr,
+#referrer-table tbody tr {
   border-bottom: 1px solid rgba(201,169,110,0.07);
   transition: background 0.15s;
 }
 
 #type-table tbody tr:hover,
-#click-table tbody tr:hover {
+#click-table tbody tr:hover,
+#referrer-table tbody tr:hover {
   background: var(--bg-card2);
 }
 
 #type-table td,
-#click-table td {
+#click-table td,
+#referrer-table td {
   padding: 9px 10px;
   color: var(--cream);
   white-space: nowrap;
@@ -487,6 +492,11 @@ body {
 #click-table th:nth-child(1), #click-table td:nth-child(1) { width: 50%; }
 #click-table th:nth-child(2), #click-table td:nth-child(2) { width: 18%; }
 #click-table th:nth-child(3), #click-table td:nth-child(3) { width: 32%; }
+
+/* 컬럼 폭 — 유입 경로 표 (3컬럼: 출처/유입수/비율) */
+#referrer-table th:nth-child(1), #referrer-table td:nth-child(1) { width: 50%; }
+#referrer-table th:nth-child(2), #referrer-table td:nth-child(2) { width: 18%; }
+#referrer-table th:nth-child(3), #referrer-table td:nth-child(3) { width: 32%; }
 
 .pct-bar-wrap {
   display: flex;
