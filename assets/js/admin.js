@@ -386,7 +386,7 @@ function renderClickTable(clickRows, total) {
       const label    = key.replace(/_/g, ' ');
       return `<tr>
         <td>${label}</td>
-        <td>${cnt.toLocaleString('ko-KR')}</td>
+        <td>${cnt.toLocaleString('ko-KR')} / ${total.toLocaleString('ko-KR')}</td>
         <td>
           <div class="pct-bar-wrap">
             <div class="pct-bar-track">
