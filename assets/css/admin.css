@@ -517,7 +517,7 @@ body {
 
 /* ──────────────────── CONFIG ──────────────────── */
 
-/* 예매자 수 입력 행 */
+/* 예매자 수 / 영상 URL 입력 행 (외부 링크 카드와 디자인 통일) */
 .reservation-row {
   display: flex;
   align-items: center;
@@ -525,16 +525,32 @@ body {
   margin-bottom: 8px;
 }
 
-.reservation-row input[type="number"] {
+.reservation-row input {
   flex: 1;
-  max-width: 200px;
-  padding: 10px 14px;
-  background: var(--bg-deep);
+  padding: 11px 14px;
+  background: var(--bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: 9px;
   color: var(--cream);
   font-family: var(--font);
   font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.reservation-row input:focus {
+  border-color: var(--gold);
+}
+
+.reservation-row input::placeholder {
+  color: var(--ink-light);
+  font-size: 13px;
+}
+
+/* 예매자 수 input 만 너비 제한 (숫자라 작은 폭) */
+.reservation-row input[type="number"] {
+  max-width: 200px;
 }
 
 .reservation-suffix {
