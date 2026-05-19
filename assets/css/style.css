@@ -608,7 +608,7 @@ button { font-family: var(--font-sans); cursor:pointer; }
 .cta-quote::after {
   display: block;
   font-family: var(--font-serif);
-  font-size: 48px;
+  font-size: 36px;
   color: var(--gold);
   line-height: 0.4;
   font-weight: 400;
@@ -616,29 +616,29 @@ button { font-family: var(--font-sans); cursor:pointer; }
 
 .cta-quote::before {
   content: '\201C';
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .cta-quote::after {
   content: '\201D';
-  margin-top: 28px;
+  margin-top: 22px;
 }
 
-/* CTA 도입부 — 1.5배 폰트, 일반 색 */
+/* CTA 도입부 — 1.2배 폰트, 일반 색 */
 .cta-intro {
   font-family: var(--font);
-  font-size: 22.5px;
+  font-size: 18px;
   color: var(--cream);
-  line-height: 1.7;
-  margin: 0 0 24px;
+  line-height: 1.75;
+  margin: 0 0 22px;
   padding: 0 8px;
   word-break: keep-all;
 }
 
-/* CTA 강조 문구 — 1.5배 폰트 + 골드 + 볼드 */
+/* CTA 강조 문구 — 1.2배 폰트 + 골드 + 볼드 */
 .cta-highlight {
   font-family: var(--font);
-  font-size: 22.5px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--gold);
   line-height: 1.6;
