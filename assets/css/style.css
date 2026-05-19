@@ -495,39 +495,13 @@ button { font-family: var(--font-sans); cursor:pointer; }
 }
 .section-cons .result-section-title { color: #d4a06a; }
 
-/* 💬 자주 하는 말 — 보라 톤 (인용구 느낌, 이탤릭 X) */
+/* 💬 자주 하는 말 — 보라 톤 (다른 섹션과 폰트/여백 동일) */
 .section-phrases {
   background: rgba(195, 155, 211, 0.06);
   border: 1px solid rgba(195, 155, 211, 0.2);
 }
 .section-phrases .result-section-title { color: #c39bd3; }
-
-.section-phrases ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.section-phrases li {
-  position: relative;
-  padding: 8px 0 8px 22px;
-  font-family: var(--font);
-  font-size: 15px;
-  line-height: 1.65;
-  color: var(--ink);
-  font-style: normal;
-  letter-spacing: -0.1px;
-}
-.section-phrases li::before {
-  content: '\201C';
-  position: absolute;
-  left: 0;
-  top: 2px;
-  font-family: var(--font-serif);
-  font-size: 22px;
-  color: #c39bd3;
-  font-style: normal;
-  line-height: 1;
-}
+.section-phrases ul li::before { color: #c39bd3; opacity: 0.7; }
 
 /* 🌀 반복하는 고민 — 청록 톤 */
 .section-concern {
@@ -623,19 +597,45 @@ button { font-family: var(--font-sans); cursor:pointer; }
   font-style: normal;
 }
 
-/* 공통 CTA — 도입부 */
-.cta-intro {
-  font-family: var(--font);
-  font-size: 15px;
-  color: var(--cream);
-  line-height: 1.9;
-  margin: 0 0 24px;
-  padding: 0 8px;
-  word-break: keep-all;
+/* 공통 CTA — 전체 컨테이너에 위아래 큰따옴표 */
+.cta-quote {
+  position: relative;
+  padding: 36px 8px 40px;
   text-align: center;
 }
 
-/* 공통 CTA — 강조 문구 (1.5배 + 골드 + 볼드 + 위아래 큰따옴표) */
+.cta-quote::before,
+.cta-quote::after {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 48px;
+  color: var(--gold);
+  line-height: 0.4;
+  font-weight: 400;
+}
+
+.cta-quote::before {
+  content: '\201C';
+  margin-bottom: 20px;
+}
+
+.cta-quote::after {
+  content: '\201D';
+  margin-top: 28px;
+}
+
+/* CTA 도입부 — 1.5배 폰트, 일반 색 */
+.cta-intro {
+  font-family: var(--font);
+  font-size: 22.5px;
+  color: var(--cream);
+  line-height: 1.7;
+  margin: 0 0 24px;
+  padding: 0 8px;
+  word-break: keep-all;
+}
+
+/* CTA 강조 문구 — 1.5배 폰트 + 골드 + 볼드 */
 .cta-highlight {
   font-family: var(--font);
   font-size: 22.5px;
@@ -643,30 +643,8 @@ button { font-family: var(--font-sans); cursor:pointer; }
   color: var(--gold);
   line-height: 1.6;
   margin: 0;
-  padding: 28px 8px 32px;
+  padding: 0 8px;
   word-break: keep-all;
-  text-align: center;
-  position: relative;
-}
-
-.cta-highlight::before,
-.cta-highlight::after {
-  display: block;
-  font-family: var(--font-serif);
-  font-size: 38px;
-  color: var(--gold);
-  line-height: 0.4;
-  font-weight: 400;
-}
-
-.cta-highlight::before {
-  content: '\201C';
-  margin-bottom: 16px;
-}
-
-.cta-highlight::after {
-  content: '\201D';
-  margin-top: 22px;
 }
 
 /* 콘서트/외부 링크 버튼 */
