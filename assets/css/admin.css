@@ -267,6 +267,73 @@ body {
   .custom-range { padding-left: 0; border-left: none; flex-wrap: wrap; }
 }
 
+/* ──────────────────── INFO TOOLTIP ──────────────────── */
+
+.info-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: rgba(201,169,110,0.18);
+  border: 1px solid rgba(201,169,110,0.45);
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  font-style: italic;
+  cursor: help;
+  margin-left: 6px;
+  position: relative;
+  font-family: serif;
+  vertical-align: middle;
+  user-select: none;
+}
+
+.info-tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1A1410;
+  color: var(--cream);
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 400;
+  font-style: normal;
+  font-family: inherit;
+  white-space: pre-wrap;
+  width: 280px;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s;
+  z-index: 100;
+  line-height: 1.55;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.info-tip::before {
+  content: '';
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--border);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s;
+}
+
+.info-tip:hover::after,
+.info-tip:hover::before {
+  opacity: 1;
+}
+
 /* ──────────────────── STAT CARDS ──────────────────── */
 
 .stat-cards {
