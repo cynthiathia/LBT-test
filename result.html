@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LBT 결과 — 나의 언어 유형</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <meta id="og-title"       property="og:title"       content="LBT 언어유형 테스트 결과">
+  <meta id="og-description" property="og:description" content="나의 언어 유형을 확인해보세요.">
+  <meta id="og-image"       property="og:image"       content="">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css?v=5">
+  <script src="assets/js/theme.js?v=5"></script>
+</head>
+<body>
+
+  <button class="theme-toggle" id="theme-toggle" title="테마 전환">☀</button>
+
+  <!-- 로딩 -->
+  <div id="loading" class="loading-wrap">
+    <div class="loading-dot"></div>
+  </div>
+
+  <!-- 결과 화면 -->
+  <div id="result-screen" class="result-page" style="display:none">
+
+    <div class="result-top-bar">
+      <span class="result-top-lbt">LBT</span>
+    </div>
+
+    <!-- 캡처 영역 (result-card + 콘서트 메시지) -->
+    <div id="capture-area">
+
+      <!-- 결과 카드 -->
+      <div id="result-card">
+        <div class="result-type-code" id="result-type-code"></div>
+
+        <div class="result-img-wrap" id="result-img-wrap"></div>
+
+        <h1 class="result-type-name" id="result-type-name"></h1>
+
+        <div class="result-section section-feature">
+          <div class="result-section-title">특징</div>
+          <ul id="result-features"></ul>
+        </div>
+
+        <div class="result-section section-pros">
+          <div class="result-section-title">장점</div>
+          <ul id="result-pros"></ul>
+        </div>
+
+        <div class="result-section section-cons">
+          <div class="result-section-title">단점</div>
+          <ul id="result-cons"></ul>
+        </div>
+
+        <div class="result-section section-rx">
+          <div class="result-section-title">이하영 작가의 처방</div>
+          <p id="result-prescription"></p>
+        </div>
+      </div>
+
+      <!-- 콘서트 메시지 (캡처 포함) -->
+      <div class="capture-concert">
+        <p class="type-concert-message" id="type-concert-message"></p>
+      </div>
+
+    </div>
+
+    <!-- 외부 링크 (캡처 제외) -->
+    <div class="result-links">
+      <div id="external-links"></div>
+    </div>
+
+    <!-- 축 분석 -->
+    <div class="axes-section">
+      <div class="axes-section-title">나의 언어 유형 분석</div>
+      <div id="axes-chart"></div>
+    </div>
+
+    <!-- 공유 -->
+    <div class="share-section">
+      <div class="share-title">공유하기</div>
+      <div class="share-buttons">
+        <button class="share-btn" id="btn-copy">
+          <span class="share-btn-icon">🔗</span>
+          <span>링크 복사</span>
+        </button>
+        <button class="share-btn" id="btn-download">
+          <span class="share-btn-icon">📷</span>
+          <span>이미지 저장</span>
+        </button>
+        <button class="share-btn" id="btn-kakao">
+          <span class="share-btn-icon">
+            <svg width="22" height="22" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 5C11.5 5 3 12 3 20.8c0 5.4 3.1 10.1 7.8 13L9 37l6.5-3.5c2 .5 4.2.8 6.5.8 10.5 0 19-7 19-15.8S32.5 5 22 5z" fill="#3C1E1E"/>
+              <circle cx="14.5" cy="21" r="2.8" fill="#FEE500"/>
+              <circle cx="22" cy="21" r="2.8" fill="#FEE500"/>
+              <circle cx="29.5" cy="21" r="2.8" fill="#FEE500"/>
+            </svg>
+          </span>
+          <span>카카오로 공유</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 다시하기 -->
+    <div class="result-retake">
+      <a href="index.html" class="btn-retake">다시 테스트하기</a>
+    </div>
+
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <!-- html2canvas -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- Kakao SDK -->
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script>
+
+  <script src="assets/js/firebase-config.js?v=5"></script>
+  <script src="assets/js/result.js?v=5"></script>
+  <script src="assets/js/share.js?v=5"></script>
+</body>
+</html>

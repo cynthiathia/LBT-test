@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LBT 어드민 — 언어유형 테스트</title>
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/admin.css">
+</head>
+<body>
+
+  <!-- 로그인 -->
+  <section id="login-wrap">
+    <div class="login-box">
+      <div class="login-logo">
+        <span class="logo-lbt">LBT</span>
+        <span class="logo-sub">관리자</span>
+      </div>
+      <h1 class="login-title">언어유형 테스트<br>어드민 대시보드</h1>
+      <form id="login-form">
+        <input
+          type="password"
+          id="pw-input"
+          placeholder="비밀번호를 입력하세요"
+          autocomplete="current-password"
+        >
+        <button type="button" id="login-btn">로그인</button>
+        <p id="pw-error" class="error-msg" hidden>비밀번호가 올바르지 않습니다.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- 대시보드 -->
+  <section id="dashboard">
+    <header class="dash-header">
+      <div class="header-left">
+        <span class="logo-lbt">LBT</span>
+        <span class="header-title">어드민 대시보드</span>
+      </div>
+      <div class="header-right">
+        <span id="last-updated" class="last-updated"></span>
+        <button id="logout-btn" class="btn-logout">로그아웃</button>
+      </div>
+    </header>
+
+    <main class="dash-main">
+
+      <!-- 요약 카드 -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-label">총 참여자</div>
+          <div class="stat-value" id="total-count">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">오늘 참여자</div>
+          <div class="stat-value" id="today-count">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">최다 유형</div>
+          <div class="stat-value sm" id="top-type">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">최소 유형</div>
+          <div class="stat-value sm" id="bottom-type">—</div>
+        </div>
+      </div>
+
+      <!-- 클릭 통계 카드 -->
+      <div class="stat-cards">
+        <div class="stat-card">
+          <div class="stat-label">총 링크 클릭</div>
+          <div class="stat-value" id="total-clicks">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">전체 클릭률</div>
+          <div class="stat-value sm" id="click-ctr">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">오늘 클릭</div>
+          <div class="stat-value" id="today-clicks">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">오늘 클릭률</div>
+          <div class="stat-value sm" id="today-ctr">—</div>
+        </div>
+      </div>
+
+      <!-- 일별 추이 (전체 너비) -->
+      <div class="chart-card wide">
+        <div class="chart-title">
+          일별 참여자 추이
+          <div class="period-filter">
+            <button class="period-btn" data-period="7">7일</button>
+            <button class="period-btn active" data-period="14">14일</button>
+            <button class="period-btn" data-period="30">30일</button>
+            <button class="period-btn" data-period="monthly">월별</button>
+          </div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="trend-chart"></canvas>
+        </div>
+      </div>
+
+      <!-- 유형 분포 차트 + 테이블 -->
+      <div class="charts-row">
+        <div class="chart-card">
+          <div class="chart-title">유형별 분포</div>
+          <div class="chart-wrap">
+            <canvas id="type-chart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">유형별 참여 현황</div>
+          <div class="type-table-wrap">
+            <table id="type-table">
+              <thead>
+                <tr>
+                  <th>유형</th>
+                  <th>이름</th>
+                  <th>참여</th>
+                  <th>비율</th>
+                </tr>
+              </thead>
+              <tbody id="type-table-body"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- 링크 클릭 현황 -->
+      <div class="chart-card">
+        <div class="chart-title">링크별 클릭 현황</div>
+        <div class="type-table-wrap">
+          <table id="click-table">
+            <thead>
+              <tr>
+                <th>링크</th>
+                <th>총 클릭</th>
+                <th>오늘</th>
+                <th>클릭률</th>
+              </tr>
+            </thead>
+            <tbody id="click-table-body"><tr><td colspan="4" style="text-align:center;color:#7A6A58;padding:20px;">데이터 없음</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 링크 설정 -->
+      <div class="config-card">
+        <div class="config-title">외부 링크 설정</div>
+        <div class="link-rows" id="link-rows"></div>
+        <button class="btn-add-link" id="add-link-btn">+ 링크 추가</button>
+        <div class="config-actions">
+          <button id="save-config-btn" class="btn-save">저장</button>
+          <span id="save-msg" class="save-msg" hidden>✓ 저장되었습니다.</span>
+        </div>
+      </div>
+
+    </main>
+  </section>
+
+  <!-- Firebase compat SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <script src="assets/js/firebase-config.js"></script>
+  <script src="assets/js/admin-config.js"></script>
+  <script src="assets/js/admin.js"></script>
+</body>
+</html>
