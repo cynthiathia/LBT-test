@@ -55,6 +55,7 @@ async function init() {
   renderAxesChart();
   await loadExternalLinks();
   trackStat(typeCode);
+  loadLiveCounter();
   sessionStorage.removeItem('lbt_result_type');
 
   loadingEl.style.display       = 'none';
@@ -268,6 +269,64 @@ function trackStat(code) {
   } catch (e) {
     // 통계 기록 실패 시 무시
   }
+}
+
+/* ────────── LIVE 카운터 ────────── */
+
+function loadLiveCounter() {
+  const container = document.getElementById('live-counter');
+  if (!container) return;
+
+  let initialized = false;
+  let reservationCount = 0;
+
+  // 예매자 수 (수동 입력 / config) — 단발성
+  db.ref('/config/reservation').once('value').then(snap => {
+    reservationCount = (snap.val() || {}).count || 0;
+  }).catch(() => {});
+
+  // 테스트 참여자 수 (legacy + v2) — 실시간 리스너
+  db.ref('/stats').on('value', snap => {
+    const stats = snap.val() || {};
+    const testCount = (stats.total || 0) + (stats.v2 && stats.v2.total || 0);
+
+    if (testCount < 1 && reservationCount < 1) {
+      container.hidden = true;
+      return;
+    }
+    container.hidden = false;
+
+    if (!initialized) {
+      animateCount('live-test-count',        testCount);
+      animateCount('live-reservation-count', reservationCount);
+      initialized = true;
+    } else {
+      // 이후 업데이트는 부드럽게 갱신만 (애니메이션 없이)
+      document.getElementById('live-test-count').textContent =
+        testCount.toLocaleString('ko-KR');
+    }
+  }, err => {
+    container.hidden = true;
+  });
+}
+
+function animateCount(elId, target) {
+  const el = document.getElementById(elId);
+  if (!el) return;
+  if (target <= 0) {
+    el.textContent = '0';
+    return;
+  }
+  const duration = 800;
+  const start    = performance.now();
+  function tick(now) {
+    const t      = Math.min((now - start) / duration, 1);
+    const eased  = 1 - Math.pow(1 - t, 3);
+    const value  = Math.round(target * eased);
+    el.textContent = value.toLocaleString('ko-KR');
+    if (t < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
 }
 
 /* ────────── 유틸 ────────── */

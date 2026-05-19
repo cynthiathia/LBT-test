@@ -102,6 +102,7 @@ function initDashboard() {
 
     renderAll();
     renderConfig(data.config || {});
+    renderReservation(data.config || {});
     updateTimestamp();
   }, (err) => {
     console.error('Firebase 읽기 오류:', err);
@@ -113,6 +114,12 @@ function initDashboard() {
   if (configSaveHandler) saveBtn.removeEventListener('click', configSaveHandler);
   configSaveHandler = saveConfig;
   saveBtn.addEventListener('click', configSaveHandler);
+
+  // 예매자 수 저장 버튼
+  const resBtn = document.getElementById('save-reservation-btn');
+  if (resBtn) {
+    resBtn.onclick = saveReservation;
+  }
 
   // 글로벌 기간 필터 버튼
   document.querySelectorAll('.period-btn-global').forEach(btn => {
@@ -609,7 +616,8 @@ function saveConfig() {
 
   saveBtn.disabled = true;
 
-  db.ref('/config').set({ links })
+  // 기존 reservation 값을 보존하면서 links만 갱신
+  db.ref('/config/links').set(links)
     .then(() => {
       saveMsg.hidden = false;
       setTimeout(() => { saveMsg.hidden = true; }, 2500);
@@ -619,6 +627,39 @@ function saveConfig() {
     })
     .finally(() => {
       saveBtn.disabled = false;
+    });
+}
+
+/* ────────── 예매자 수 (LIVE 카운터) ────────── */
+
+function renderReservation(config) {
+  const input = document.getElementById('reservation-input');
+  if (!input) return;
+  if (document.activeElement === input) return; // 입력 중이면 덮어쓰지 않음
+  const count = (config.reservation && config.reservation.count) || 0;
+  input.value = count;
+}
+
+function saveReservation() {
+  const input = document.getElementById('reservation-input');
+  const btn   = document.getElementById('save-reservation-btn');
+  const msg   = document.getElementById('reservation-save-msg');
+  const count = Math.max(0, parseInt(input.value, 10) || 0);
+
+  btn.disabled = true;
+  db.ref('/config/reservation').set({
+    count,
+    lastUpdate: firebase.database.ServerValue.TIMESTAMP,
+  })
+    .then(() => {
+      msg.hidden = false;
+      setTimeout(() => { msg.hidden = true; }, 2500);
+    })
+    .catch((err) => {
+      alert('저장 실패: ' + err.message);
+    })
+    .finally(() => {
+      btn.disabled = false;
     });
 }
 

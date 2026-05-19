@@ -647,6 +647,60 @@ button { font-family: var(--font-sans); cursor:pointer; }
   word-break: keep-all;
 }
 
+/* LIVE 카운터 */
+.live-counter {
+  max-width: 520px;
+  margin: 8px auto 24px;
+  padding: 22px 24px 24px;
+  text-align: center;
+  border-top: 1px dashed rgba(201,169,110,0.28);
+  border-bottom: 1px dashed rgba(201,169,110,0.28);
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 14px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #ff5252;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ff5252;
+  box-shadow: 0 0 8px rgba(255,82,82,0.7);
+  animation: live-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%      { opacity: 0.35; transform: scale(1.35); }
+}
+
+.live-message {
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.95;
+  color: var(--cream);
+  word-break: keep-all;
+  margin: 0;
+}
+
+.live-number {
+  font-family: var(--font);
+  font-size: 1.55em;
+  font-weight: 700;
+  color: var(--gold);
+  letter-spacing: 0.5px;
+  display: inline-block;
+  padding: 0 2px;
+}
+
 /* 콘서트/외부 링크 버튼 */
 .result-links {
   max-width: 520px;
