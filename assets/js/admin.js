@@ -129,6 +129,9 @@ function initDashboard() {
     vidBtn.onclick = saveConcertVideo;
   }
 
+  // UTM 생성기 바인딩
+  initUtmBuilder();
+
   // 글로벌 기간 필터 버튼
   document.querySelectorAll('.period-btn-global').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -773,6 +776,73 @@ function saveConcertVideo() {
     .finally(() => {
       btn.disabled = false;
     });
+}
+
+/* ────────── UTM 마케팅 링크 생성기 ────────── */
+
+const UTM_BASE_URL = 'https://test.kkkstudio.com/';
+
+function initUtmBuilder() {
+  const select       = document.getElementById('utm-source-select');
+  const customRow    = document.getElementById('utm-custom-row');
+  const customInput  = document.getElementById('utm-custom-input');
+  const campaignInput= document.getElementById('utm-campaign-input');
+  const previewEl    = document.getElementById('utm-preview-url');
+  const copyBtn      = document.getElementById('utm-copy-btn');
+  const copyMsg      = document.getElementById('utm-copy-msg');
+  if (!select || !previewEl || !copyBtn) return;
+
+  function sanitize(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9_-]/g, '_')
+      .slice(0, 40);
+  }
+
+  function update() {
+    const isCustom = select.value === '__custom__';
+    customRow.hidden = !isCustom;
+
+    const rawSource = isCustom ? customInput.value : select.value;
+    const source    = sanitize(rawSource);
+    const campaign  = sanitize(campaignInput.value);
+
+    if (!source) {
+      previewEl.textContent = UTM_BASE_URL;
+      return;
+    }
+
+    const params = new URLSearchParams();
+    params.set('utm_source', source);
+    if (campaign) params.set('utm_campaign', campaign);
+    previewEl.textContent = `${UTM_BASE_URL}?${params.toString()}`;
+  }
+
+  select.addEventListener('change', update);
+  customInput.addEventListener('input', update);
+  campaignInput.addEventListener('input', update);
+
+  copyBtn.addEventListener('click', async () => {
+    const url = previewEl.textContent;
+    try {
+      await navigator.clipboard.writeText(url);
+      copyMsg.hidden = false;
+      setTimeout(() => { copyMsg.hidden = true; }, 2000);
+    } catch (e) {
+      // 폴백: textarea 선택
+      const ta = document.createElement('textarea');
+      ta.value = url;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+      copyMsg.hidden = false;
+      setTimeout(() => { copyMsg.hidden = true; }, 2000);
+    }
+  });
+
+  update();
 }
 
 /* ────────── 유틸 ────────── */

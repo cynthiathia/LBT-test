@@ -8,7 +8,7 @@
   <link rel="apple-touch-icon" href="favicon_admin.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/admin.css?v=17">
+  <link rel="stylesheet" href="assets/css/admin.css?v=18">
 </head>
 <body>
 
@@ -182,6 +182,69 @@
         </div>
       </div>
 
+      <!-- 마케팅 링크 생성기 (UTM) -->
+      <div class="config-card">
+        <div class="config-title">마케팅 링크 생성기 (채널 추적용 URL)</div>
+        <div class="utm-row">
+          <label class="utm-label">채널</label>
+          <select id="utm-source-select" class="utm-select">
+            <optgroup label="카카오">
+              <option value="kakao_share">카카오톡 공유</option>
+              <option value="kakao_channel">카카오 비즈니스 채널</option>
+              <option value="kakao_open_chat">카카오 오픈채팅</option>
+            </optgroup>
+            <optgroup label="인스타그램">
+              <option value="instagram_post">인스타 게시물</option>
+              <option value="instagram_story">인스타 스토리</option>
+              <option value="instagram_bio">인스타 프로필 링크</option>
+              <option value="instagram_dm">인스타 DM</option>
+              <option value="instagram_ad">인스타 광고</option>
+            </optgroup>
+            <optgroup label="네이버">
+              <option value="naver_blog">네이버 블로그</option>
+              <option value="naver_cafe">네이버 카페</option>
+              <option value="naver_search_ad">네이버 검색 광고</option>
+            </optgroup>
+            <optgroup label="기타 SNS">
+              <option value="facebook">페이스북</option>
+              <option value="threads">스레드</option>
+              <option value="youtube">유튜브</option>
+              <option value="twitter">트위터 / X</option>
+              <option value="tiktok">틱톡</option>
+            </optgroup>
+            <optgroup label="이메일 / 오프라인">
+              <option value="email_newsletter">이메일 뉴스레터</option>
+              <option value="poster_qr">포스터 QR</option>
+              <option value="offline_event">오프라인 이벤트</option>
+            </optgroup>
+            <optgroup label="파트너 / 인물">
+              <option value="author_sns">이하영 작가 SNS</option>
+              <option value="publisher_sns">출판사 SNS</option>
+              <option value="interpark_banner">인터파크 배너</option>
+            </optgroup>
+            <option value="__custom__">기타 (직접 입력)</option>
+          </select>
+        </div>
+
+        <div class="utm-row" id="utm-custom-row" hidden>
+          <label class="utm-label">직접 입력</label>
+          <input type="text" id="utm-custom-input" placeholder="예: friend_share (영문, 숫자, _, - 만)">
+        </div>
+
+        <div class="utm-row">
+          <label class="utm-label">캠페인 <span class="utm-optional">(선택)</span></label>
+          <input type="text" id="utm-campaign-input" placeholder="예: june21_concert (비워두면 utm_campaign 미포함)">
+        </div>
+
+        <div class="utm-preview">
+          <span class="utm-preview-label">생성된 링크</span>
+          <code id="utm-preview-url"></code>
+          <button id="utm-copy-btn" class="btn-utm-copy">복사</button>
+          <span id="utm-copy-msg" class="save-msg" hidden>✓ 복사되었습니다.</span>
+        </div>
+        <p class="reservation-note">생성된 링크를 SNS, 메시지 등에 그대로 붙여넣으면 어드민 "유입 경로"에 채널별로 자동 집계됩니다.</p>
+      </div>
+
       <!-- 콘서트 홍보 영상 설정 -->
       <div class="config-card">
         <div class="config-title">콘서트 홍보 영상 (YouTube)</div>
@@ -225,8 +288,8 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
-  <script src="assets/js/firebase-config.js?v=17"></script>
-  <script src="assets/js/admin-config.js?v=17"></script>
-  <script src="assets/js/admin.js?v=17"></script>
+  <script src="assets/js/firebase-config.js?v=18"></script>
+  <script src="assets/js/admin-config.js?v=18"></script>
+  <script src="assets/js/admin.js?v=18"></script>
 </body>
 </html>

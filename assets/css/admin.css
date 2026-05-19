@@ -525,6 +525,122 @@ body {
   min-width: 38px;
 }
 
+/* ──────────────────── UTM 빌더 ──────────────────── */
+
+.utm-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.utm-label {
+  flex-shrink: 0;
+  width: 90px;
+  font-size: 13px;
+  color: var(--ink-light);
+  font-weight: 600;
+}
+
+.utm-optional {
+  font-weight: 400;
+  color: var(--ink-light);
+  opacity: 0.7;
+}
+
+.utm-row select,
+.utm-row input {
+  flex: 1;
+  padding: 11px 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  color: var(--cream);
+  font-family: var(--font);
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.utm-row select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%23C9A96E' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 12px;
+  padding-right: 36px;
+}
+
+.utm-row select:focus,
+.utm-row input:focus {
+  border-color: var(--gold);
+}
+
+.utm-row option,
+.utm-row optgroup {
+  background: var(--bg-card);
+  color: var(--cream);
+}
+
+.utm-row input::placeholder {
+  color: var(--ink-light);
+  font-size: 13px;
+}
+
+.utm-preview {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  background: var(--bg-deep);
+  border: 1px dashed var(--border);
+  border-radius: 10px;
+}
+
+.utm-preview-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink-light);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+#utm-preview-url {
+  flex: 1;
+  min-width: 0;
+  font-family: 'Consolas', 'Menlo', monospace;
+  font-size: 13px;
+  color: var(--gold);
+  word-break: break-all;
+  user-select: all;
+}
+
+.btn-utm-copy {
+  padding: 8px 16px;
+  background: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 8px;
+  color: #1A1410;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.btn-utm-copy:hover { opacity: 0.85; }
+
+@media (max-width: 540px) {
+  .utm-row { flex-direction: column; align-items: stretch; gap: 6px; }
+  .utm-label { width: auto; }
+  .utm-preview { flex-direction: column; align-items: stretch; }
+  #utm-preview-url { font-size: 12px; }
+}
+
 /* ──────────────────── CONFIG ──────────────────── */
 
 /* 예매자 수 / 영상 URL 입력 행 (외부 링크 카드와 디자인 통일) */
