@@ -1,16 +1,7 @@
-/* ────────── 상수 ────────── */
-
-const AXIS_NAMES = {
-  axis1: '감정 해소법',
-  axis2: '마음의 초점',
-  axis3: '삶의 주도권',
-  axis4: '관계의 방식',
-};
-
 /* ────────── 상태 ────────── */
 
-let questions = [];   // 섞인 문항 배열 (scoreA/B도 A/B 스왑에 맞게 조정됨)
-let answers   = [];   // [{ id, selected:'A'|'B' }, ...]  인덱스 = 표시 순서
+let questions = [];
+let answers   = [];   // [{ id, codes: ['X','Y'] }, ...]
 let current   = 0;
 
 /* ────────── DOM ────────── */
@@ -22,11 +13,10 @@ const progressCatEl  = document.getElementById('progress-category');
 const progressCntEl  = document.getElementById('progress-count');
 const questionNumEl  = document.getElementById('question-number');
 const questionTextEl = document.getElementById('question-text');
-const optionAEl      = document.getElementById('option-a');
-const optionBEl      = document.getElementById('option-b');
-const optionATextEl  = document.getElementById('option-a-text');
-const optionBTextEl  = document.getElementById('option-b-text');
 const btnBackEl      = document.getElementById('btn-back');
+
+const optionEls = ['a', 'b', 'c', 'd'].map(id => document.getElementById(`option-${id}`));
+const optionTextEls = ['a', 'b', 'c', 'd'].map(id => document.getElementById(`option-${id}-text`));
 
 /* ────────── 유틸 ────────── */
 
@@ -39,55 +29,34 @@ function shuffleArray(arr) {
   return a;
 }
 
-function randomizeQuestions(rawQuestions) {
-  const shuffled = shuffleArray(rawQuestions);
-  return shuffled.map(q => {
-    if (Math.random() < 0.5) {
-      // A/B 선택지 및 점수 교체
-      return {
-        ...q,
-        optionA: q.optionB,
-        optionB: q.optionA,
-        scoreA:  q.scoreB,
-        scoreB:  q.scoreA,
-      };
-    }
-    return { ...q };
-  });
-}
-
 /* ────────── 초기화 ────────── */
 
 async function init() {
-  const res  = await fetch('lbt_data.json');
+  const res  = await fetch('lbt_data.json?v=6');
   const data = await res.json();
 
-  // 세션 내 동일 순서 유지 (새로고침해도 동일한 순서)
   const savedQ = sessionStorage.getItem('lbt_questions');
   if (savedQ) {
     try {
       questions = JSON.parse(savedQ);
     } catch {
-      questions = randomizeQuestions(data.questions);
+      questions = shuffleArray(data.questions);
       sessionStorage.setItem('lbt_questions', JSON.stringify(questions));
     }
   } else {
-    questions = randomizeQuestions(data.questions);
+    questions = shuffleArray(data.questions);
     sessionStorage.setItem('lbt_questions', JSON.stringify(questions));
   }
 
-  // 이전 답변 복구
   const savedA = sessionStorage.getItem('lbt_answers');
   if (savedA) {
     try { answers = JSON.parse(savedA); } catch { answers = []; }
   }
 
-  // 마지막으로 답한 문항에서 시작
   current = Math.min(answers.length, questions.length - 1);
 
   loadingEl.style.display    = 'none';
   testScreenEl.style.display = 'flex';
-
   renderQuestion(current);
 }
 
@@ -98,17 +67,21 @@ function renderQuestion(idx) {
   const pct = (idx / questions.length) * 100;
 
   progressFillEl.style.width = pct + '%';
-  progressCatEl.textContent  = AXIS_NAMES[q.axis] || '';
+  progressCatEl.textContent  = '';
   progressCntEl.textContent  = `${idx + 1} / ${questions.length}`;
 
   questionNumEl.textContent  = `Q${idx + 1}`;
   questionTextEl.textContent = q.question;
-  optionATextEl.textContent  = q.optionA;
-  optionBTextEl.textContent  = q.optionB;
+
+  q.options.forEach((opt, i) => {
+    optionTextEls[i].textContent = opt.text;
+  });
 
   const existing = answers[idx];
-  optionAEl.classList.toggle('selected', existing?.selected === 'A');
-  optionBEl.classList.toggle('selected', existing?.selected === 'B');
+  optionEls.forEach((el, i) => {
+    const isSelected = existing?.label === q.options[i].label;
+    el.classList.toggle('selected', isSelected);
+  });
 
   btnBackEl.disabled = idx === 0;
 
@@ -119,20 +92,17 @@ function renderQuestion(idx) {
 
 /* ────────── 선택 처리 ────────── */
 
-function selectOption(choice) {
-  optionAEl.classList.toggle('selected', choice === 'A');
-  optionBEl.classList.toggle('selected', choice === 'B');
+function selectOption(optionIdx) {
+  const opt = questions[current].options[optionIdx];
 
-  // 버튼 중복 클릭 방지
-  optionAEl.disabled = true;
-  optionBEl.disabled = true;
+  optionEls.forEach((el, i) => el.classList.toggle('selected', i === optionIdx));
+  optionEls.forEach(el => { el.disabled = true; });
 
-  answers[current] = { id: questions[current].id, selected: choice };
+  answers[current] = { id: questions[current].id, label: opt.label, codes: opt.codes };
   sessionStorage.setItem('lbt_answers', JSON.stringify(answers));
 
   setTimeout(() => {
-    optionAEl.disabled = false;
-    optionBEl.disabled = false;
+    optionEls.forEach(el => { el.disabled = false; });
 
     if (current < questions.length - 1) {
       current++;
@@ -143,8 +113,7 @@ function selectOption(choice) {
   }, 380);
 }
 
-optionAEl.addEventListener('click', () => selectOption('A'));
-optionBEl.addEventListener('click', () => selectOption('B'));
+optionEls.forEach((el, i) => el.addEventListener('click', () => selectOption(i)));
 
 /* ────────── 이전 버튼 ────────── */
 
@@ -159,19 +128,13 @@ btnBackEl.addEventListener('click', () => {
 
 function calculateScores() {
   const scores = { P:0, E:0, S:0, A:0, R:0, C:0, J:0, M:0 };
-  for (let i = 0; i < questions.length; i++) {
-    const ans = answers[i];
-    if (!ans) continue;
-    const q     = questions[i];
-    const score = ans.selected === 'A' ? q.scoreA : q.scoreB;
-    if (score in scores) scores[score]++;
+  for (const ans of answers) {
+    if (!ans?.codes) continue;
+    for (const code of ans.codes) {
+      if (code in scores) scores[code]++;
+    }
   }
   return scores;
-}
-
-function calculateType() {
-  const s = calculateScores();
-  return `${s.P >= s.E ? 'P':'E'}${s.S >= s.A ? 'S':'A'}${s.R >= s.C ? 'R':'C'}${s.J >= s.M ? 'J':'M'}`;
 }
 
 /* ────────── 완료 ────────── */
@@ -185,7 +148,6 @@ function finishTest() {
   sessionStorage.removeItem('lbt_answers');
   sessionStorage.removeItem('lbt_questions');
 
-  // 점수를 URL 파라미터로도 전달 (직접 링크 공유 대비)
   const s = scores;
   const scoresParam = `${s.P},${s.E},${s.S},${s.A},${s.R},${s.C},${s.J},${s.M}`;
   window.location.replace(`result.html?type=${typeCode}&sc=${scoresParam}`);

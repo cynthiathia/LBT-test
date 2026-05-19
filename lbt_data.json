@@ -3,8 +3,8 @@
     "title": "LBT 언어유형 테스트",
     "subtitle": "Language Behavior Type",
     "description": "나의 언어 습관을 통해 내 삶의 패턴을 발견합니다",
-    "totalQuestions": 20,
-    "estimatedMinutes": 3,
+    "totalQuestions": 24,
+    "estimatedMinutes": 4,
     "concert": {
       "title": "이하영 작가 북콘서트 『언어의 선물』",
       "date": "2026년 6월 21일",
@@ -41,186 +41,287 @@
     }
   ],
 
+  "scoringInfo": {
+    "maxScorePerCode": 6,
+    "totalQuestions": 24,
+    "codesPerQuestion": 2,
+    "formula": "각 선택지 선택 시 해당 코드 2개에 각 +1점. 코드당 최대 6점. 퍼센테이지 = (점수 / 6) * 100",
+    "tieBreaker": "동점(3점)일 경우 경계형으로 표시"
+  },
+
+  "combinations": [
+    { "id": "combo1", "axes": ["axis1", "axis2"], "questions": [1, 2, 3, 4] },
+    { "id": "combo2", "axes": ["axis1", "axis3"], "questions": [5, 6, 7, 8] },
+    { "id": "combo3", "axes": ["axis1", "axis4"], "questions": [9, 10, 11, 12] },
+    { "id": "combo4", "axes": ["axis2", "axis3"], "questions": [13, 14, 15, 16] },
+    { "id": "combo5", "axes": ["axis2", "axis4"], "questions": [17, 18, 19, 20] },
+    { "id": "combo6", "axes": ["axis3", "axis4"], "questions": [21, 22, 23, 24] }
+  ],
+
   "questions": [
     {
       "id": 1,
-      "axis": "axis1",
-      "question": "억울한 일이 생겼을 때 나는?",
-      "optionA": "혼자 삭힌다",
-      "optionB": "바로 누군가에게 털어놓는다",
-      "scoreA": "P",
-      "scoreB": "E"
+      "combination": "combo1",
+      "question": "오늘 하루 내내 억울한 일이 있었다.",
+      "options": [
+        { "label": "A", "text": "혼자 곱씹으며 삭힌다, 한동안 기분이 안 풀린다", "codes": ["P", "S"] },
+        { "label": "B", "text": "혼자 있다 보면 금방 털어낸다", "codes": ["P", "A"] },
+        { "label": "C", "text": "바로 털어놓는데, 말해도 계속 생각난다", "codes": ["E", "S"] },
+        { "label": "D", "text": "말하고 나면 바로 후련하다", "codes": ["E", "A"] }
+      ]
     },
     {
       "id": 2,
-      "axis": "axis1",
-      "question": "기쁜 일이 생기면?",
-      "optionA": "혼자 음미한다",
-      "optionB": "바로 카톡부터 연다",
-      "scoreA": "P",
-      "scoreB": "E"
+      "combination": "combo1",
+      "question": "오늘 새로 산 옷을 처음 입고 나왔다.",
+      "options": [
+        { "label": "A", "text": "혼자 어딘가 어색한 것 같다는 생각이 든다", "codes": ["P", "S"] },
+        { "label": "B", "text": "혼자 뿌듯하다", "codes": ["P", "A"] },
+        { "label": "C", "text": "주변 반응이 신경 쓰인다", "codes": ["E", "S"] },
+        { "label": "D", "text": "주변에 먼저 어때 보이냐고 물어본다", "codes": ["E", "A"] }
+      ]
     },
     {
       "id": 3,
-      "axis": "axis1",
-      "question": "중요한 결정을 앞두고?",
-      "optionA": "혼자 생각을 정리한 뒤 말한다",
-      "optionB": "말하면서 생각이 정리된다",
-      "scoreA": "P",
-      "scoreB": "E"
+      "combination": "combo1",
+      "question": "중요한 시험이나 발표를 앞두고 있다.",
+      "options": [
+        { "label": "A", "text": "혼자 준비하는데, 잘 못할까봐 걱정된다", "codes": ["P", "S"] },
+        { "label": "B", "text": "혼자 준비하면서 할 수 있다고 다독인다", "codes": ["P", "A"] },
+        { "label": "C", "text": "불안한 마음을 주변에 털어놓는다", "codes": ["E", "S"] },
+        { "label": "D", "text": "주변과 이야기하며 준비하고, 잘 될 거라 생각한다", "codes": ["E", "A"] }
+      ]
     },
     {
       "id": 4,
-      "axis": "axis1",
-      "question": "누군가와 다퉜을 때?",
-      "optionA": "혼자 있고 싶다",
-      "optionB": "바로 풀고 싶다",
-      "scoreA": "P",
-      "scoreB": "E"
+      "combination": "combo1",
+      "question": "누군가와 의견 충돌이 있었다.",
+      "options": [
+        { "label": "A", "text": "혼자 계속 곱씹게 된다", "codes": ["P", "S"] },
+        { "label": "B", "text": "혼자 정리하고 나면 금방 넘어간다", "codes": ["P", "A"] },
+        { "label": "C", "text": "바로 말하고 나서도 계속 신경 쓰인다", "codes": ["E", "S"] },
+        { "label": "D", "text": "바로 이야기로 풀고 나면 개운하다", "codes": ["E", "A"] }
+      ]
     },
     {
       "id": 5,
-      "axis": "axis1",
-      "question": "모임에서 나는?",
-      "optionA": "주로 듣는 편이다",
-      "optionB": "주로 말하는 편이다",
-      "scoreA": "P",
-      "scoreB": "E"
+      "combination": "combo2",
+      "question": "지금 하는 일이 마음에 안 든다.",
+      "options": [
+        { "label": "A", "text": "혼자 불만을 삭이며 그냥 다닌다", "codes": ["P", "R"] },
+        { "label": "B", "text": "티는 안 내지만 조용히 다른 길을 알아본다", "codes": ["P", "C"] },
+        { "label": "C", "text": "주변에 불만을 털어놓으면서도 딱히 행동은 안 한다", "codes": ["E", "R"] },
+        { "label": "D", "text": "주변에 말하면서 빠르게 다음 행동을 찾는다", "codes": ["E", "C"] }
+      ]
     },
     {
       "id": 6,
-      "axis": "axis2",
-      "question": "잘나가는 지인 SNS를 봤을 때?",
-      "optionA": "나는 왜 저렇게 못 할까",
-      "optionB": "저 사람 대단하다, 끝",
-      "scoreA": "S",
-      "scoreB": "A"
+      "combination": "combo2",
+      "question": "5년 뒤 내 모습을 생각하면.",
+      "options": [
+        { "label": "A", "text": "잘 모르겠다, 혼자 막연하게 걱정이 된다", "codes": ["P", "R"] },
+        { "label": "B", "text": "혼자 조용히 방향을 그려보고 있다", "codes": ["P", "C"] },
+        { "label": "C", "text": "친구들과 이야기하지만 딱히 계획은 없다", "codes": ["E", "R"] },
+        { "label": "D", "text": "주변과 이야기하면서 구체적으로 만들어가고 있다", "codes": ["E", "C"] }
+      ]
     },
     {
       "id": 7,
-      "axis": "axis2",
-      "question": "힘든 하루가 끝났을 때 먼저 떠오르는 건?",
-      "optionA": "오늘 잘못한 것, 후회되는 것",
-      "optionB": "그래도 괜찮았던 것 하나",
-      "scoreA": "S",
-      "scoreB": "A"
+      "combination": "combo2",
+      "question": "하기 싫은 약속이 잡혔다.",
+      "options": [
+        { "label": "A", "text": "속으로 불편하지만 그냥 간다", "codes": ["P", "R"] },
+        { "label": "B", "text": "망설이다가 결국 못 간다고 말한다", "codes": ["P", "C"] },
+        { "label": "C", "text": "가기 싫다고 투덜거리면서 간다", "codes": ["E", "R"] },
+        { "label": "D", "text": "솔직하게 말하고 빠진다", "codes": ["E", "C"] }
+      ]
     },
     {
       "id": 8,
-      "axis": "axis2",
-      "question": "새로운 일을 시작할 때 드는 첫 감정은?",
-      "optionA": "잘 못하면 어쩌지",
-      "optionB": "일단 해보자",
-      "scoreA": "S",
-      "scoreB": "A"
+      "combination": "combo2",
+      "question": "지금 하는 일보다 더 잘 맞을 것 같은 일이 눈에 띄었다.",
+      "options": [
+        { "label": "A", "text": "관심은 가지만, 실제로 잘 맞을지 불안하다", "codes": ["P", "R"] },
+        { "label": "B", "text": "티는 안 내지만 조용히 알아보기 시작한다", "codes": ["P", "C"] },
+        { "label": "C", "text": "주변에 조언을 구해보지만, 선뜻 몸이 나서진 않는다", "codes": ["E", "R"] },
+        { "label": "D", "text": "주변에 말하고 바로 실행한다", "codes": ["E", "C"] }
+      ]
     },
     {
       "id": 9,
-      "axis": "axis2",
-      "question": "돈 얘기할 때 내 입에서 자주 나오는 말은?",
-      "optionA": "돈이 없어, 부족해",
-      "optionB": "이 정도면 괜찮아",
-      "scoreA": "S",
-      "scoreB": "A"
+      "combination": "combo3",
+      "question": "모임에서 처음 만난 사람이 있다.",
+      "options": [
+        { "label": "A", "text": "처음 보면 어느 정도 느낌이 온다", "codes": ["P", "J"] },
+        { "label": "B", "text": "혼자 탐색하는 시간을 가진다", "codes": ["P", "M"] },
+        { "label": "C", "text": "대화를 통해 어떤 사람인지 빠르게 파악한다", "codes": ["E", "J"] },
+        { "label": "D", "text": "적극적으로 대화하지만 사람을 쉽게 모른다고 생각한다", "codes": ["E", "M"] }
+      ]
     },
     {
       "id": 10,
-      "axis": "axis2",
-      "question": "계획이 틀어졌을 때?",
-      "optionA": "망했다",
-      "optionB": "그럼 다른 걸 해볼까",
-      "scoreA": "S",
-      "scoreB": "A"
+      "combination": "combo3",
+      "question": "친한 사람이 봐도 봐도 이해 안 되는 행동을 반복한다.",
+      "options": [
+        { "label": "A", "text": "혼자 답답해하면서도 말은 못 한다", "codes": ["P", "M"] },
+        { "label": "B", "text": "혼자 참다가 결국 한마디 한다", "codes": ["P", "J"] },
+        { "label": "C", "text": "바로 직접적으로 말한다", "codes": ["E", "J"] },
+        { "label": "D", "text": "말하고 싶지만, 그 사람 방식이 있겠지 하고 넘긴다", "codes": ["E", "M"] }
+      ]
     },
     {
       "id": 11,
-      "axis": "axis3",
-      "question": "원하지 않는 자리에 끌려가게 됐을 때?",
-      "optionA": "어쩔 수 없으니 간다",
-      "optionB": "못 간다고 말한다",
-      "scoreA": "R",
-      "scoreB": "C"
+      "combination": "combo3",
+      "question": "대화 중 상대방이 틀린 정보를 자신있게 말한다.",
+      "options": [
+        { "label": "A", "text": "속으로 아닌데 싶지만 그냥 넘긴다", "codes": ["P", "M"] },
+        { "label": "B", "text": "몇 번 참다가 결국 틀렸다고 바로잡는다", "codes": ["P", "J"] },
+        { "label": "C", "text": "틀렸다고 바로 말한다", "codes": ["E", "J"] },
+        { "label": "D", "text": "굳이 지적 안 해도 된다고 생각하고 넘긴다", "codes": ["E", "M"] }
+      ]
     },
     {
       "id": 12,
-      "axis": "axis3",
-      "question": "5년 후 내 모습을 생각하면?",
-      "optionA": "그때 되면 어떻게든 되겠지",
-      "optionB": "지금 그 방향으로 뭔가 하고 있다",
-      "scoreA": "R",
-      "scoreB": "C"
+      "combination": "combo3",
+      "question": "오랜만에 만난 친구가 예전과 많이 달라져 있다.",
+      "options": [
+        { "label": "A", "text": "속으로 낯설고, 왜 변했을까 싶다", "codes": ["P", "J"] },
+        { "label": "B", "text": "속으로 어색하지만, 그럴 수 있지 하고 받아들인다", "codes": ["P", "M"] },
+        { "label": "C", "text": "직접 어떻게 된 건지 물어본다", "codes": ["E", "J"] },
+        { "label": "D", "text": "달라진 모습도 자연스럽게 받아들이고 대화한다", "codes": ["E", "M"] }
+      ]
     },
     {
       "id": 13,
-      "axis": "axis3",
-      "question": "불만족스러운 상황이 계속될 때?",
-      "optionA": "나쁘진 않으니 그냥 유지한다",
-      "optionB": "바꿀 방법을 찾기 시작한다",
-      "scoreA": "R",
-      "scoreB": "C"
+      "combination": "combo4",
+      "question": "주말 계획이 갑자기 취소됐다.",
+      "options": [
+        { "label": "A", "text": "허탈하다, 그냥 집에 있어야겠다", "codes": ["S", "R"] },
+        { "label": "B", "text": "아깝다, 다른 걸 빠르게 잡아야지", "codes": ["S", "C"] },
+        { "label": "C", "text": "잘됐다, 하고 싶던 거 해야지", "codes": ["A", "C"] },
+        { "label": "D", "text": "괜찮아, 그냥 쉬어도 되지", "codes": ["A", "R"] }
+      ]
     },
     {
       "id": 14,
-      "axis": "axis3",
-      "question": "내가 자주 쓰는 말은?",
-      "optionA": "어쩔 수 없지, 원래 그래",
-      "optionB": "내가 해볼게, 바꿔보자",
-      "scoreA": "R",
-      "scoreB": "C"
+      "combination": "combo4",
+      "question": "열심히 준비한 일의 결과가 기대보다 안 좋았다.",
+      "options": [
+        { "label": "A", "text": "많이 속상하고, 한동안 마음이 안 풀린다", "codes": ["S", "R"] },
+        { "label": "B", "text": "속상하지만 뭐가 문제였는지 바로 분석한다", "codes": ["S", "C"] },
+        { "label": "C", "text": "아쉽지만 배운 게 있다, 다음엔 다르게 해봐야지", "codes": ["A", "C"] },
+        { "label": "D", "text": "최선을 다했으니 괜찮다, 털고 쉰다", "codes": ["A", "R"] }
+      ]
     },
     {
       "id": 15,
-      "axis": "axis3",
-      "question": "내 삶은?",
-      "optionA": "주어진 것을 살아내고 있다",
-      "optionB": "내가 원하는 대로 만들어가고 있다",
-      "scoreA": "R",
-      "scoreB": "C"
+      "combination": "combo4",
+      "question": "오랫동안 연락하던 사람과 자연스럽게 멀어지고 있다.",
+      "options": [
+        { "label": "A", "text": "아쉽지만, 그냥 흘러가는 대로 둔다", "codes": ["S", "R"] },
+        { "label": "B", "text": "아쉬워서, 먼저 연락해서 붙잡아본다", "codes": ["S", "C"] },
+        { "label": "C", "text": "서로 변한 거겠지, 담담하게 받아들인다", "codes": ["A", "R"] },
+        { "label": "D", "text": "아쉽지 않다, 새로운 인연을 만들면 된다", "codes": ["A", "C"] }
+      ]
     },
     {
       "id": 16,
-      "axis": "axis4",
-      "question": "내 생각과 다른 선택을 한 친구를 보면?",
-      "optionA": "저건 좀 아닌 것 같은데",
-      "optionB": "그 사람은 그럴 수 있지",
-      "scoreA": "J",
-      "scoreB": "M"
+      "combination": "combo4",
+      "question": "리스크가 있는 새로운 기회가 생겼다.",
+      "options": [
+        { "label": "A", "text": "잘 안 되면 어쩌지, 지금이 더 낫겠다", "codes": ["S", "R"] },
+        { "label": "B", "text": "두렵지만 일단 도전해본다", "codes": ["S", "C"] },
+        { "label": "C", "text": "해볼 만하다, 잘 될 것 같다", "codes": ["A", "C"] },
+        { "label": "D", "text": "되면 좋고, 일단 한 번 해본다", "codes": ["A", "R"] }
+      ]
     },
     {
       "id": 17,
-      "axis": "axis4",
-      "question": "대화 중 누가 틀린 말을 하면?",
-      "optionA": "지나치기 어렵다, 말한다",
-      "optionB": "굳이 지적하지 않는다",
-      "scoreA": "J",
-      "scoreB": "M"
+      "combination": "combo5",
+      "question": "나보다 잘 나가는 지인 SNS를 봤다.",
+      "options": [
+        { "label": "A", "text": "솔직히 부럽고 질투가 난다", "codes": ["S", "J"] },
+        { "label": "B", "text": "나는 왜 저렇게 못 할까, 그래도 저 사람 대단하다", "codes": ["S", "M"] },
+        { "label": "C", "text": "와, 나도 기준을 높여야겠다", "codes": ["A", "J"] },
+        { "label": "D", "text": "저 사람은 저 사람, 나는 나다", "codes": ["A", "M"] }
+      ]
     },
     {
       "id": 18,
-      "axis": "axis4",
-      "question": "처음 만난 사람에 대해?",
-      "optionA": "짧은 대화에도 인상이 빠르게 정해진다",
-      "optionB": "여러 번 봐야 알 것 같다",
-      "scoreA": "J",
-      "scoreB": "M"
+      "combination": "combo5",
+      "question": "가까운 사람이 내 충고를 무시했다.",
+      "options": [
+        { "label": "A", "text": "답답하다, 왜 저러는지 이해가 안 된다", "codes": ["S", "J"] },
+        { "label": "B", "text": "속상하지만, 본인 선택이니 지켜본다", "codes": ["S", "M"] },
+        { "label": "C", "text": "아쉽지만, 기회를 봐서 한 번 더 이야기해본다", "codes": ["A", "J"] },
+        { "label": "D", "text": "본인이 생각한 방법이 있겠지", "codes": ["A", "M"] }
+      ]
     },
     {
       "id": 19,
-      "axis": "axis4",
-      "question": "누군가의 실수를 봤을 때?",
-      "optionA": "왜 저랬을까, 이해가 안 된다",
-      "optionB": "나도 그럴 수 있었겠다",
-      "scoreA": "J",
-      "scoreB": "M"
+      "combination": "combo5",
+      "question": "약속 시간에 상대방이 30분 늦었다.",
+      "options": [
+        { "label": "A", "text": "많이 불편하다, 다음엔 확실히 말해야겠다", "codes": ["S", "J"] },
+        { "label": "B", "text": "불편하지만, 사정이 있었겠지", "codes": ["S", "M"] },
+        { "label": "C", "text": "괜찮은데, 다음엔 미리 알려달라 해야지", "codes": ["A", "J"] },
+        { "label": "D", "text": "괜찮다, 그럴 수 있지", "codes": ["A", "M"] }
+      ]
     },
     {
       "id": 20,
-      "axis": "axis4",
-      "question": "주변에서 나를 표현하는 말은?",
-      "optionA": "확실하다, 원칙이 있다",
-      "optionB": "편하다, 뭐든 들어준다",
-      "scoreA": "J",
-      "scoreB": "M"
+      "combination": "combo5",
+      "question": "내 방식과 다르게 일하는 동료가 있다.",
+      "options": [
+        { "label": "A", "text": "저 방식은 비효율적인 것 같아서 답답하다", "codes": ["S", "J"] },
+        { "label": "B", "text": "불편하긴 한데, 각자 방식이 있겠지", "codes": ["S", "M"] },
+        { "label": "C", "text": "결과가 안 좋으면 그때 말해줄 거다", "codes": ["A", "J"] },
+        { "label": "D", "text": "다른 방식도 있구나, 흥미롭다", "codes": ["A", "M"] }
+      ]
+    },
+    {
+      "id": 21,
+      "combination": "combo6",
+      "question": "팀 프로젝트 방향이 마음에 안 든다.",
+      "options": [
+        { "label": "A", "text": "불편하지만 흐름을 따라간다", "codes": ["R", "M"] },
+        { "label": "B", "text": "불편하다는 것을 적절한 타이밍에 말한다", "codes": ["R", "J"] },
+        { "label": "C", "text": "직접 의견을 내고 방향을 바꿔보려 한다", "codes": ["C", "J"] },
+        { "label": "D", "text": "내 역할에서 할 수 있는 것부터 먼저 한다", "codes": ["C", "M"] }
+      ]
+    },
+    {
+      "id": 22,
+      "combination": "combo6",
+      "question": "처음 만난 자리에서 나와 잘 맞을 것 같은 사람을 발견했다.",
+      "options": [
+        { "label": "A", "text": "속으론 좋은데 티는 내지 않는다", "codes": ["R", "M"] },
+        { "label": "B", "text": "진짜 좋은지 확인하고 싶지만 다가올 때까지 기다린다", "codes": ["R", "J"] },
+        { "label": "C", "text": "먼저 연락처를 묻고 다음 만남을 만들어낸다", "codes": ["C", "J"] },
+        { "label": "D", "text": "자연스럽게 가까워질 것 같으면 친해진다", "codes": ["C", "M"] }
+      ]
+    },
+    {
+      "id": 23,
+      "combination": "combo6",
+      "question": "모임 분위기가 내가 원하는 방향이 아니다.",
+      "options": [
+        { "label": "A", "text": "분위기에 맞게 그냥 따라간다", "codes": ["R", "M"] },
+        { "label": "B", "text": "따라가긴 하는데, 어쩔 수 없이 티가 난다", "codes": ["R", "J"] },
+        { "label": "C", "text": "자연스럽게 분위기를 바꿔보려 한다", "codes": ["C", "M"] },
+        { "label": "D", "text": "모임 호스트에게 직접 이야기한다", "codes": ["C", "J"] }
+      ]
+    },
+    {
+      "id": 24,
+      "combination": "combo6",
+      "question": "내 삶의 방향이 맞는지 의문이 들 때.",
+      "options": [
+        { "label": "A", "text": "일단 지금 흐름을 유지한다", "codes": ["R", "M"] },
+        { "label": "B", "text": "지금 방향이 정말 맞는지 따져본다", "codes": ["R", "J"] },
+        { "label": "C", "text": "내가 원하는 방향을 다시 잡고 움직인다", "codes": ["C", "J"] },
+        { "label": "D", "text": "정답은 없다, 원하는 걸 찾아가면 된다", "codes": ["C", "M"] }
+      ]
     }
   ],
 
