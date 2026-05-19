@@ -462,6 +462,20 @@ button { font-family: var(--font-sans); cursor:pointer; }
   opacity: 0.5;
 }
 
+/* 한 줄 정의 (볼드, 이탤릭 X) */
+.result-tagline {
+  font-family: var(--font);
+  font-size: clamp(14px, 3.6vw, 16px);
+  font-weight: 700;
+  font-style: normal;
+  color: var(--ink);
+  text-align: center;
+  line-height: 1.5;
+  margin: -8px auto 24px;
+  max-width: 90%;
+  letter-spacing: -0.2px;
+}
+
 /* 섹션별 색상 */
 .section-feature {
   background: var(--feature-bg);
@@ -480,6 +494,47 @@ button { font-family: var(--font-sans); cursor:pointer; }
   border: 1px solid var(--cons-border);
 }
 .section-cons .result-section-title { color: #d4a06a; }
+
+/* 💬 자주 하는 말 — 인용구 느낌 */
+.section-phrases {
+  background: rgba(195, 155, 211, 0.06);
+  border: 1px solid rgba(195, 155, 211, 0.2);
+}
+.section-phrases .result-section-title { color: #c39bd3; }
+
+.section-phrases ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.section-phrases li {
+  position: relative;
+  padding: 8px 0 8px 22px;
+  font-family: var(--font-serif);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink);
+  font-style: italic;
+  letter-spacing: -0.1px;
+}
+.section-phrases li::before {
+  content: '\201C';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: #c39bd3;
+  font-style: normal;
+  line-height: 1;
+}
+
+/* 🌀 반복하는 고민 — 글머리 */
+.section-concern {
+  background: rgba(180, 130, 210, 0.05);
+  border: 1px solid rgba(180, 130, 210, 0.18);
+}
+.section-concern .result-section-title { color: #b482d2; }
 
 .section-rx {
   background: var(--rx-bg);

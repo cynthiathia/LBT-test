@@ -42,7 +42,7 @@ async function init() {
   }
 
   // lbt_data.json 로드
-  const res  = await fetch('lbt_data.json?v=7');
+  const res  = await fetch('lbt_data.json?v=8');
   const data = await res.json();
   const type = data.types[typeCode];
 
@@ -88,32 +88,24 @@ function renderResult(type, meta) {
     imgWrap.style.display = 'none';
   }
 
-  // 유형명
+  // 유형명 + 한 줄 정의
   document.getElementById('result-type-name').textContent = type.name;
+  document.getElementById('result-tagline').textContent   = type.tagline || '';
 
-  // 특징
+  // 특징 / 장점 / 단점 / 자주 하는 말 / 반복하는 고민
   renderList('result-features', type.features);
+  renderList('result-pros',     type.pros);
+  renderList('result-cons',     type.cons);
+  renderList('result-phrases',  type.phrases  || []);
+  renderList('result-concern',  type.recurringConcern || []);
 
-  // 장점
-  renderList('result-pros', type.pros);
-
-  // 단점
-  renderList('result-cons', type.cons);
-
-  // 처방
-  document.getElementById('result-prescription').textContent = type.prescription;
-
-  // 초대 문구 — "6월 21일" 앞 줄바꿈 + 볼드/골드
-  const msgEl    = document.getElementById('type-concert-message');
-  const msg      = type.concertMessage || '';
-  const splitIdx = msg.indexOf('6월 21일');
-  if (splitIdx > 0) {
-    const before = msg.slice(0, splitIdx).trim();
-    const after  = msg.slice(splitIdx);
-    msgEl.innerHTML = `${before}<br><strong class="concert-highlight">${after}</strong>`;
-  } else {
-    msgEl.textContent = msg;
-  }
+  // 공통 CTA — meta.cta (16개 유형 동일)
+  const ctaEl = document.getElementById('type-cta');
+  const cta   = (meta && meta.cta) || '';
+  ctaEl.innerHTML = cta
+    .split('\n')
+    .map(line => line.trim() === '' ? '<br>' : line)
+    .join('<br>');
 }
 
 function renderList(id, items) {
