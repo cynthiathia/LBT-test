@@ -53,6 +53,12 @@ async function init() {
 
   renderResult(type, data.meta);
   renderAxesChart();
+
+  // 익명 인증 완료 대기 (DB 작업 가능 상태)
+  if (typeof authReady !== 'undefined') {
+    try { await authReady; } catch (e) { /* ignore */ }
+  }
+
   await loadExternalLinks();
   loadConcertVideo();
   trackStat(typeCode);

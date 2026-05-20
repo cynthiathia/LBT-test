@@ -5,7 +5,7 @@
    - Firebase: stats/v2/referrers/{source}, referrersByDate/{date}/{source}
 */
 
-(function () {
+(async function () {
   if (typeof db === 'undefined' || typeof firebase === 'undefined') return;
   if (sessionStorage.getItem('lbt_referrer_tracked')) return;
 
@@ -14,6 +14,11 @@
 
   const today = getTodayKey();
   const safe  = source.replace(/[.#$\[\]/]/g, '_').slice(0, 60);
+
+  // 익명 인증 완료 대기 후 기록
+  if (typeof authReady !== 'undefined') {
+    try { await authReady; } catch (e) { /* ignore */ }
+  }
 
   const updates = {};
   updates[`stats/v2/referrers/${safe}`]                 = firebase.database.ServerValue.increment(1);

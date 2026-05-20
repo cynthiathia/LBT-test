@@ -83,7 +83,11 @@ let cachedClicks     = {};
 
 /* ────────── 초기화 ────────── */
 
-function initDashboard() {
+async function initDashboard() {
+  // 익명 인증 완료 대기
+  if (typeof authReady !== 'undefined') {
+    try { await authReady; } catch (e) { /* ignore */ }
+  }
   db.ref('/').on('value', (snapshot) => {
     const data     = snapshot.val() || {};
     const statsRaw = data.stats     || {};
